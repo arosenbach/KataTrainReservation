@@ -21,47 +21,39 @@ public class WebTicketManager {
         this.trainCaching.clear();
     }
 
-    public String reserve(String train, int seats) {
-        List<Seat> availableSeats = new ArrayList<Seat>();
-        int count = 0;
-        String result = "";
-        String bookingRef;
-
-        // get the train
-        String jsonTrain = getTrain(train);
-
-        result = jsonTrain;
-
-        Train trainInst = new Train(jsonTrain);
-        if ((trainInst.getReservedSeats() + seats) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
+    public String reserve(String trainId, int requestedSeatsCount) {
+        final Train trainInst = new Train(getTrainTopology(trainId));
+        if ((trainInst.getReservedSeats() + requestedSeatsCount) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
             int numberOfReserv = 0;
 
             // find seats to reserve
+            final List<Seat> availableSeats = new ArrayList<>();
             for (int index = 0, i = 0; index < trainInst.getSeats().size(); index++) {
                 Seat each = (Seat) trainInst.getSeats().toArray()[index];
                 if (each.getBookingRef() == "") {
                     i++;
-                    if (i <= seats) {
+                    if (i <= requestedSeatsCount) {
                         availableSeats.add(each);
                     }
                 }
             }
 
+            int count = 0;
             for (Seat a : availableSeats) {
                 count++;
             }
 
             int reservedSeats = 0;
 
-            if (count != seats) {
-                return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", train);
+            if (count != requestedSeatsCount) {
+                return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
                 StringBuilder sb = new StringBuilder("{\"trainId\": \"");
-                sb.append(train);
+                sb.append(trainId);
                 sb.append("\",");
 
                 Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-                bookingRef = getBookRef(client);
+                String bookingRef = getBookRef(client);
 
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
@@ -73,21 +65,19 @@ public class WebTicketManager {
                 sb.append(bookingRef);
                 sb.append("\",");
 
-                if (numberOfReserv == seats) {
-                    trainCaching.save(train, trainInst, bookingRef);
+                if (numberOfReserv == requestedSeatsCount) {
+                    trainCaching.save(trainId, trainInst, bookingRef);
 
                     client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
                     WebTarget uri = client.target(uriTrainDataService).path("reserve");
                     Invocation.Builder request = uri.request(MediaType.APPLICATION_JSON);
-
-                    String todo = "[TODO]";
 
                     if (reservedSeats == 0) {
                         System.out.println("Reserved seat(s): " + reservedSeats);
                     }
 
                     // HTTP POST
-                    Response post = request.post(Entity.entity(buildPostContent(train, bookingRef, availableSeats), MediaType.APPLICATION_JSON));
+                    Response post = request.post(Entity.entity(buildPostContent(trainId, bookingRef, availableSeats), MediaType.APPLICATION_JSON));
 
                     assert post.getStatus() == Response.Status.OK.getStatusCode();
 
@@ -101,7 +91,7 @@ public class WebTicketManager {
             }
         }
 
-        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", train);
+        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
 
     }
 
@@ -150,7 +140,7 @@ public class WebTicketManager {
     }
 
 
-    private String getTrain(String train) {
+    private String getTrainTopology(String train) {
         Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
         WebTarget webTarget = client.target(uriTrainDataService).path("data_for_train/" + train);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
