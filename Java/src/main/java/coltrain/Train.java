@@ -5,6 +5,7 @@ import coltrain.api.models.Seat;
 import java.util.*;
 
 public class Train {
+    private static final double CAPACITY_THRESHOLD = 0.70;
     private final List<Seat> seats;
 
     public Train(final List<Seat> seats) {
@@ -21,5 +22,23 @@ public class Train {
 
     public int getMaxSeat() {
         return this.seats.size();
+    }
+
+    public boolean doNotExceedCapacityThreshold(final int requestedSeatsCount) {
+        return (getReservedSeats() + requestedSeatsCount) <= Math.floor(CAPACITY_THRESHOLD * getMaxSeat());
+    }
+
+    public List<Seat> findAvailableSeats(final int requestedSeatsCount) {
+        final List<Seat> availableSeats = new ArrayList<>();
+        for (int index = 0, i = 0; index < getSeats().size(); index++) {
+            Seat each = (Seat) getSeats().toArray()[index];
+            if (each.getBookingRef().equals("")) {
+                i++;
+                if (i <= requestedSeatsCount) {
+                    availableSeats.add(each);
+                }
+            }
+        }
+        return availableSeats;
     }
 }

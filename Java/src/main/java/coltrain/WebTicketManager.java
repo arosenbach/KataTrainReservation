@@ -2,7 +2,6 @@ package coltrain;
 
 import coltrain.api.models.Seat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WebTicketManager {
@@ -25,24 +24,12 @@ public class WebTicketManager {
     }
 
     public String reserve(String trainId, int requestedSeatsCount) {
-        final Train trainInst = trainDataService.getTrain(trainId);
-        if ((trainInst.getReservedSeats() + requestedSeatsCount) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
+        final Train train = trainDataService.getTrain(trainId);
+        if (train.doNotExceedCapacityThreshold(requestedSeatsCount)) {
 
-            // find seats to reserve
-            final List<Seat> availableSeats = new ArrayList<>();
-            for (int index = 0, i = 0; index < trainInst.getSeats().size(); index++) {
-                Seat each = (Seat) trainInst.getSeats().toArray()[index];
-                if (each.getBookingRef().equals("")) {
-                    i++;
-                    if (i <= requestedSeatsCount) {
-                        availableSeats.add(each);
-                    }
-                }
-            }
+            final List<Seat> availableSeats = train.findAvailableSeats(requestedSeatsCount);
 
-            if (availableSeats.size() != requestedSeatsCount) {
-                return String.format("{\"trainId\": \"%s\",\"bookingReference\": \"\", \"seats\":[]}", trainId);
-            } else {
+            if (availableSeats.size() == requestedSeatsCount) {
 
                 String bookingRef = bookingReferenceService.getBookingReference();
 
@@ -50,16 +37,14 @@ public class WebTicketManager {
                     availableSeat.setBookingRef(bookingRef);
                 }
 
-                if (availableSeats.size() == requestedSeatsCount) {
-                    trainCaching.save(trainId, trainInst, bookingRef);
-                    trainDataService.bookSeats(trainId, availableSeats, bookingRef);
+                trainCaching.save(trainId, train, bookingRef);
+                trainDataService.bookSeats(trainId, availableSeats, bookingRef);
 
 
-                    return "{\"trainId\": \"" + trainId + "\"," +
-                            "\"bookingReference\": \"" + bookingRef + "\"," +
-                            "\"seats\":" + dumpSeats(availableSeats) +
-                            "}";
-                }
+                return "{\"trainId\": \"" + trainId + "\"," +
+                        "\"bookingReference\": \"" + bookingRef + "\"," +
+                        "\"seats\":" + dumpSeats(availableSeats) +
+                        "}";
             }
         }
 
