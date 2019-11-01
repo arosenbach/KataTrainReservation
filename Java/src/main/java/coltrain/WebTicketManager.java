@@ -50,7 +50,7 @@ public class WebTicketManager {
             int reservedSeats = 0;
 
             if (count != requestedSeatsCount) {
-                return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
+                return String.format("{\"trainId\": \"%s\",\"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
 
                 String bookingRef = bookingReferenceService.getBookingReference();
@@ -83,7 +83,7 @@ public class WebTicketManager {
             }
         }
 
-        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
+        return String.format("{\"trainId\": \"%s\",\"bookingReference\": \"\",\"seats\":[]}", trainId);
 
     }
 

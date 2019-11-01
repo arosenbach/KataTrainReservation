@@ -11,36 +11,42 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class ColtrainTest {
+
+    public static final String BOOKING_REFERENCE = "75bcd15";
+    private static final String EMPTY_BOOKING = "";
+
     @Test
     public void should_reserve_seats_when_train_is_empty() {
-        final String bookingReference = "75bcd15";
-        final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(), new FakeBookingReferenceService(bookingReference));
+        final TrainDataService trainDataService = new FakeTrainDataService(TrainTopology.EMPTY_TRAIN);
+        final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
+        final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
+
         final String reservation = sut.reserve("express_2000", 3);
 
-        assertEquals("{\"trainId\": \"express_2000\",\"bookingReference\": \""+bookingReference+"\",\"seats\":[\"1A\", \"2A\", \"3A\"]}", reservation);
+        assertEquals("{\"trainId\": \"express_2000\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1A\", \"2A\", \"3A\"]}", reservation);
+    }
+
+    @Test
+    public void should_not_reserve_seats_when_train_is_70_percent_booked() {
+        final TrainDataService trainDataService = new FakeTrainDataService(TrainTopology.WITH_10_SEATS_AND_6_ALREADY_BOOKED);
+        final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
+        final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
+
+        final String reservation = sut.reserve("express_2000", 3);
+
+        assertEquals("{\"trainId\": \"express_2000\",\"bookingReference\": \"" + EMPTY_BOOKING + "\",\"seats\":[]}", reservation);
     }
 
     private class FakeTrainDataService implements TrainDataService {
+        private String topology;
+
+        private FakeTrainDataService(final String topology) {
+            this.topology = topology;
+        }
+
         @Override
         public String getTrainTopology(final String train) {
-            return "{\"seats\":{" +
-                    "\"1A\":{\"coach\":\"A\",\"seat_number\":\"1\",\"booking_reference\":\"\"}," +
-                    "\"2A\":{\"coach\":\"A\",\"seat_number\":\"2\",\"booking_reference\":\"\"}," +
-                    "\"3A\":{\"coach\":\"A\",\"seat_number\":\"3\",\"booking_reference\":\"\"}," +
-                    "\"4A\":{\"coach\":\"A\",\"seat_number\":\"4\",\"booking_reference\":\"\"}," +
-                    "\"5A\":{\"coach\":\"A\",\"seat_number\":\"5\",\"booking_reference\":\"\"}," +
-                    "\"6A\":{\"coach\":\"A\",\"seat_number\":\"6\",\"booking_reference\":\"\"}," +
-                    "\"7A\":{\"coach\":\"A\",\"seat_number\":\"7\",\"booking_reference\":\"\"}," +
-                    "\"8A\":{\"coach\":\"A\",\"seat_number\":\"8\",\"booking_reference\":\"\"}," +
-                    "\"1B\":{\"coach\":\"B\",\"seat_number\":\"1\",\"booking_reference\":\"\"}," +
-                    "\"2B\":{\"coach\":\"B\",\"seat_number\":\"2\",\"booking_reference\":\"\"}," +
-                    "\"3B\":{\"coach\":\"B\",\"seat_number\":\"3\",\"booking_reference\":\"\"}," +
-                    "\"4B\":{\"coach\":\"B\",\"seat_number\":\"4\",\"booking_reference\":\"\"}," +
-                    "\"5B\":{\"coach\":\"B\",\"seat_number\":\"5\",\"booking_reference\":\"\"}," +
-                    "\"6B\":{\"coach\":\"B\",\"seat_number\":\"6\",\"booking_reference\":\"\"}," +
-                    "\"7B\":{\"coach\":\"B\",\"seat_number\":\"7\",\"booking_reference\":\"\"}," +
-                    "\"8B\":{\"coach\":\"B\",\"seat_number\":\"8\",\"booking_reference\":\"\"}}" +
-                    "}";
+            return topology;
         }
 
         @Override
