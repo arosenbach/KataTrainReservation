@@ -26,7 +26,7 @@ public class WebTicketManager {
     }
 
     public String reserve(String trainId, int requestedSeatsCount) {
-        final Train trainInst = new Train(trainDataService.getTrainTopology(trainId));
+        final Train trainInst = trainDataService.getTrain(trainId);
         if ((trainInst.getReservedSeats() + requestedSeatsCount) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
             int numberOfReserv = 0;
 

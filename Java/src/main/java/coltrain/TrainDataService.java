@@ -5,7 +5,7 @@ import coltrain.api.models.Seat;
 import java.util.List;
 
 public interface TrainDataService {
-    String getTrainTopology(String train);
+    Train getTrain(String trainId);
 
     void bookSeats(String trainId, List<Seat> availableSeats, String bookingRef);
 }
