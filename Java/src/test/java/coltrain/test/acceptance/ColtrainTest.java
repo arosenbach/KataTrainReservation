@@ -14,6 +14,7 @@ public class ColtrainTest {
 
     public static final String BOOKING_REFERENCE = "75bcd15";
     private static final String EMPTY_BOOKING = "";
+    public static final String TRAIN_ID = "express_2000";
 
     @Test
     public void should_reserve_seats_when_train_is_empty() {
@@ -21,9 +22,9 @@ public class ColtrainTest {
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
         final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final String reservation = sut.reserve("express_2000", 3);
+        final String reservation = sut.reserve(TRAIN_ID, 3);
 
-        assertEquals("{\"trainId\": \"express_2000\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1A\", \"2A\", \"3A\"]}", reservation);
+        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1A\", \"2A\", \"3A\"]}", reservation);
     }
 
     @Test
@@ -32,9 +33,21 @@ public class ColtrainTest {
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
         final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final String reservation = sut.reserve("express_2000", 3);
+        final String reservation = sut.reserve(TRAIN_ID, 3);
 
-        assertEquals("{\"trainId\": \"express_2000\",\"bookingReference\": \"" + EMPTY_BOOKING + "\",\"seats\":[]}", reservation);
+        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + EMPTY_BOOKING + "\",\"seats\":[]}", reservation);
+    }
+
+
+    @Test
+    public void should_reserve_all_seats_in_the_same_coach() {
+        final TrainDataService trainDataService = new FakeTrainDataService(TrainTopology.WITH_COACH_A_HAVING_1_FREE_SEAT_AND_COACH_B_EMPTY);
+        final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
+        final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
+
+        final String reservation = sut.reserve(TRAIN_ID, 3);
+
+        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1B\", \"2B\", \"3B\"]}", reservation);
     }
 
     private class FakeTrainDataService implements TrainDataService {

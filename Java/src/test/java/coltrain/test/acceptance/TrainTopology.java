@@ -31,4 +31,16 @@ class TrainTopology {
             "\"4B\":{\"coach\":\"B\",\"seat_number\":\"4\",\"booking_reference\":\"\"}," +
             "\"5B\":{\"coach\":\"B\",\"seat_number\":\"5\",\"booking_reference\":\"\"}" +
             "}}";
+    static final String WITH_COACH_A_HAVING_1_FREE_SEAT_AND_COACH_B_EMPTY = "{\"seats\":{" +
+            "\"1A\":{\"coach\":\"A\",\"seat_number\":\"1\",\"booking_reference\":\"123456\"}," +
+            "\"2A\":{\"coach\":\"A\",\"seat_number\":\"2\",\"booking_reference\":\"123456\"}," +
+            "\"3A\":{\"coach\":\"A\",\"seat_number\":\"3\",\"booking_reference\":\"123456\"}," +
+            "\"4A\":{\"coach\":\"A\",\"seat_number\":\"4\",\"booking_reference\":\"123456\"}," +
+            "\"5A\":{\"coach\":\"A\",\"seat_number\":\"5\",\"booking_reference\":\"\"}," +
+            "\"1B\":{\"coach\":\"B\",\"seat_number\":\"1\",\"booking_reference\":\"\"}," +
+            "\"2B\":{\"coach\":\"B\",\"seat_number\":\"2\",\"booking_reference\":\"\"}," +
+            "\"3B\":{\"coach\":\"B\",\"seat_number\":\"3\",\"booking_reference\":\"\"}," +
+            "\"4B\":{\"coach\":\"B\",\"seat_number\":\"4\",\"booking_reference\":\"\"}," +
+            "\"5B\":{\"coach\":\"B\",\"seat_number\":\"5\",\"booking_reference\":\"\"}" +
+            "}}";;
 }
