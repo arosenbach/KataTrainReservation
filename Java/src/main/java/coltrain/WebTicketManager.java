@@ -2,14 +2,13 @@ package coltrain;
 
 import coltrain.api.models.Seat;
 
-import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WebTicketManager {
 
     private static String uriBookingReferenceService = "http://localhost:8282";
-    public static String uriTrainDataService = "http://localhost:8181";
+    private static String uriTrainDataService = "http://localhost:8181";
     private final TrainDataService trainDataService;
     private TrainCaching trainCaching;
     private BookingReferenceService bookingReferenceService;
@@ -28,13 +27,12 @@ public class WebTicketManager {
     public String reserve(String trainId, int requestedSeatsCount) {
         final Train trainInst = trainDataService.getTrain(trainId);
         if ((trainInst.getReservedSeats() + requestedSeatsCount) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
-            int numberOfReserv = 0;
 
             // find seats to reserve
             final List<Seat> availableSeats = new ArrayList<>();
             for (int index = 0, i = 0; index < trainInst.getSeats().size(); index++) {
                 Seat each = (Seat) trainInst.getSeats().toArray()[index];
-                if (each.getBookingRef() == "") {
+                if (each.getBookingRef().equals("")) {
                     i++;
                     if (i <= requestedSeatsCount) {
                         availableSeats.add(each);
@@ -42,36 +40,18 @@ public class WebTicketManager {
                 }
             }
 
-            int count = 0;
-            for (Seat a : availableSeats) {
-                count++;
-            }
-
-            int reservedSeats = 0;
-
-            if (count != requestedSeatsCount) {
+            if (availableSeats.size() != requestedSeatsCount) {
                 return String.format("{\"trainId\": \"%s\",\"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
 
                 String bookingRef = bookingReferenceService.getBookingReference();
-                final Client client;
 
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
-                    numberOfReserv++;
-                    reservedSeats++;
                 }
 
-
-
-                if (numberOfReserv == requestedSeatsCount) {
+                if (availableSeats.size() == requestedSeatsCount) {
                     trainCaching.save(trainId, trainInst, bookingRef);
-
-                    if (reservedSeats == 0) {
-                        System.out.println("Reserved seat(s): " + reservedSeats);
-                    }
-
-
                     trainDataService.bookSeats(trainId, availableSeats, bookingRef);
 
 
@@ -83,7 +63,7 @@ public class WebTicketManager {
             }
         }
 
-        return String.format("{\"trainId\": \"%s\",\"bookingReference\": \"\",\"seats\":[]}", trainId);
+        return "{\"trainId\": \"" + trainId + "\",\"bookingReference\": \"\",\"seats\":[]}";
 
     }
 
@@ -98,7 +78,10 @@ public class WebTicketManager {
                 firstTime = false;
             }
 
-            sb.append(String.format("\"%s%s\"", seat.getSeatNumber(), seat.getCoachName()));
+            sb.append("\"")
+                    .append(seat.getSeatNumber())
+                    .append(seat.getCoachName())
+                    .append("\"");
         }
 
         sb.append("]");
