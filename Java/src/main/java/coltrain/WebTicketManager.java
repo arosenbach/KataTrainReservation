@@ -1,28 +1,32 @@
 package coltrain;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.filter.LoggingFilter;
 import coltrain.api.models.Seat;
 
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.client.Client;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WebTicketManager {
 
     private static String uriBookingReferenceService = "http://localhost:8282";
-    private static String uriTrainDataService = "http://localhost:8181";
+    public static String uriTrainDataService = "http://localhost:8181";
+    private final TrainDataService trainDataService;
     private TrainCaching trainCaching;
+    private BookingReferenceService bookingReferenceService;
 
-    public WebTicketManager() {
+    public WebTicketManager(final TrainDataService trainDataService, final BookingReferenceService bookingReferenceService) {
+        this.trainDataService = trainDataService;
+        this.bookingReferenceService = bookingReferenceService;
         this.trainCaching = new TrainCaching();
         this.trainCaching.clear();
     }
 
+    public WebTicketManager() {
+        this(new TrainDataServiceImpl(WebTicketManager.uriTrainDataService), new BookingReferenceServiceImpl(WebTicketManager.uriBookingReferenceService));
+    }
+
     public String reserve(String trainId, int requestedSeatsCount) {
-        final Train trainInst = new Train(getTrainTopology(trainId));
+        final Train trainInst = new Train(trainDataService.getTrainTopology(trainId));
         if ((trainInst.getReservedSeats() + requestedSeatsCount) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
             int numberOfReserv = 0;
 
@@ -48,12 +52,9 @@ public class WebTicketManager {
             if (count != requestedSeatsCount) {
                 return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
-                StringBuilder sb = new StringBuilder("{\"trainId\": \"");
-                sb.append(trainId);
-                sb.append("\",");
 
-                Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-                String bookingRef = getBookRef(client);
+                String bookingRef = bookingReferenceService.getBookingReference();
+                final Client client;
 
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
@@ -61,32 +62,23 @@ public class WebTicketManager {
                     reservedSeats++;
                 }
 
-                sb.append("\"bookingReference\": \"");
-                sb.append(bookingRef);
-                sb.append("\",");
+
 
                 if (numberOfReserv == requestedSeatsCount) {
                     trainCaching.save(trainId, trainInst, bookingRef);
-
-                    client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-                    WebTarget uri = client.target(uriTrainDataService).path("reserve");
-                    Invocation.Builder request = uri.request(MediaType.APPLICATION_JSON);
 
                     if (reservedSeats == 0) {
                         System.out.println("Reserved seat(s): " + reservedSeats);
                     }
 
-                    // HTTP POST
-                    Response post = request.post(Entity.entity(buildPostContent(trainId, bookingRef, availableSeats), MediaType.APPLICATION_JSON));
 
-                    assert post.getStatus() == Response.Status.OK.getStatusCode();
-
-                    sb.append("\"seats\":");
-                    sb.append(dumpSeats(availableSeats));
-                    sb.append("}");
+                    trainDataService.bookSeats(trainId, availableSeats, bookingRef);
 
 
-                    return sb.toString();
+                    return "{\"trainId\": \"" + trainId + "\"," +
+                            "\"bookingReference\": \"" + bookingRef + "\"," +
+                            "\"seats\":" + dumpSeats(availableSeats) +
+                            "}";
                 }
             }
         }
@@ -114,51 +106,5 @@ public class WebTicketManager {
         return sb.toString();
     }
 
-    private static String buildPostContent(String trainId, String bookingRef, List<Seat> availableSeats) {
-        StringBuilder seats = new StringBuilder("[");
-
-        boolean firstTime = true;
-        for (Seat s : availableSeats) {
-            if (!firstTime) {
-                seats.append(", ");
-            } else {
-                firstTime = false;
-            }
-
-            seats.append(String.format("\"%s%s\"", s.getSeatNumber(), s.getCoachName()));
-        }
-
-        seats.append("]");
-
-
-        String result = String.format("{\"trainId\": \"%s\", \"bookingReference\": \"%s\", \"seats\":%s}",
-                trainId,
-                bookingRef,
-                seats.toString());
-        return result;
-
-    }
-
-
-    private String getTrainTopology(String train) {
-        Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-        WebTarget webTarget = client.target(uriTrainDataService).path("data_for_train/" + train);
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.get();
-        assert response.getStatus() == Response.Status.OK.getStatusCode();
-
-        return response.readEntity(String.class);
-    }
-
-
-    private String getBookRef(Client client) {
-        WebTarget webTarget = client.target(uriBookingReferenceService).path("booking_reference");
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.get();
-
-        assert response.getStatus() == Response.Status.OK.getStatusCode();
-
-        return response.readEntity(String.class);
-    }
 
 }
