@@ -2,8 +2,8 @@ package coltrain;
 
 import coltrain.api.models.Seat;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,17 +49,14 @@ public class Train {
     }
 
     public ReservationAttempt buildReservationAttempt(final int requestedSeatsCount) {
-        final List<Seat> availableSeats = new ArrayList<>();
-        for (int index = 0, i = 0; index < getSeats().size(); index++) {
-            Seat each = (Seat) getSeats().toArray()[index];
-            if (each.getBookingRef().equals("")) {
-                i++;
-                if (i <= requestedSeatsCount) {
-                    availableSeats.add(each);
-                }
+        for(Coach coach : coaches.values()){
+            final ReservationAttempt reservationAttempt = coach.buildReservationAttempt(requestedSeatsCount);
+            if(reservationAttempt.isFulfilled()){
+                return reservationAttempt;
             }
         }
-        return new ReservationAttempt(requestedSeatsCount, availableSeats);
+
+        return new ReservationAttempt(requestedSeatsCount, Collections.emptyList());
     }
 
     public Map<String, Coach> getCoaches() {
