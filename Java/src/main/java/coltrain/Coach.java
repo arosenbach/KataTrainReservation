@@ -8,8 +8,10 @@ import java.util.List;
 public class Coach {
     private final String coachName;
     private List<Seat> seats;
+    private String trainId;
 
-    public Coach(final String coachName) {
+    public Coach(final String trainId, final String coachName) {
+        this.trainId = trainId;
         this.coachName = coachName;
         this.seats = new ArrayList<>();
     }
@@ -35,6 +37,6 @@ public class Coach {
             }
         }
 
-        return new ReservationAttempt(requestedSeatsCount, availableSeats);
+        return new ReservationAttempt(trainId, requestedSeatsCount, availableSeats);
     }
 }

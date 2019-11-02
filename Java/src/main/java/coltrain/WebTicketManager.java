@@ -1,9 +1,5 @@
 package coltrain;
 
-import coltrain.api.models.Seat;
-
-import java.util.List;
-
 public class WebTicketManager {
 
     private static String uriBookingReferenceService = "http://localhost:8282";
@@ -20,7 +16,7 @@ public class WebTicketManager {
         this(new TrainDataServiceImpl(WebTicketManager.uriTrainDataService), new BookingReferenceServiceImpl(WebTicketManager.uriBookingReferenceService));
     }
 
-    public String reserve(String trainId, int requestedSeatsCount) {
+    public Reservation reserve(String trainId, int requestedSeatsCount) {
         final Train train = trainDataService.getTrain(trainId);
         if (train.doNotExceedCapacityThreshold(requestedSeatsCount)) {
 
@@ -34,38 +30,13 @@ public class WebTicketManager {
 
                 trainDataService.bookSeats(trainId, reservationAttempt.getAvailableSeats(), bookingRef);
 
-
-                return "{\"trainId\": \"" + trainId + "\"," +
-                        "\"bookingReference\": \"" + bookingRef + "\"," +
-                        "\"seats\":" + dumpSeats(reservationAttempt.getAvailableSeats()) +
-                        "}";
+                return reservationAttempt.confirm();
             }
         }
 
-        return "{\"trainId\": \"" + trainId + "\",\"bookingReference\": \"\",\"seats\":[]}";
+//        return "{\"trainId\": \"" + trainId + "\",\"bookingReference\": \"\",\"seats\":[]}";
+        return new ReservationFailure(trainId);
 
-    }
-
-    private String dumpSeats(List<Seat> seats) {
-        StringBuilder sb = new StringBuilder("[");
-
-        boolean firstTime = true;
-        for (Seat seat : seats) {
-            if (!firstTime) {
-                sb.append(", ");
-            } else {
-                firstTime = false;
-            }
-
-            sb.append("\"")
-                    .append(seat.getSeatNumber())
-                    .append(seat.getCoachName())
-                    .append("\"");
-        }
-
-        sb.append("]");
-
-        return sb.toString();
     }
 
 

@@ -13,14 +13,16 @@ import static java.util.stream.Collectors.toList;
 public class Train {
     private static final double CAPACITY_THRESHOLD = 0.70;
     private HashMap<String, Coach> coaches;
+    private String trainId;
 
-    public Train(final List<Seat> seats) {
+    public Train(String trainId, final List<Seat> seats) {
+        this.trainId = trainId;
         this.coaches = new HashMap<>();
 
         for (Seat seat : seats) {
             final String coachName = seat.getCoachName();
             if (!coaches.containsKey(coachName)) {
-                coaches.put(coachName, new Coach(coachName));
+                coaches.put(coachName, new Coach(trainId, coachName));
             }
             coaches.get(coachName).addSeat(seat);
         }
@@ -56,7 +58,7 @@ public class Train {
             }
         }
 
-        return new ReservationAttempt(requestedSeatsCount, Collections.emptyList());
+        return new ReservationAttempt(this.trainId, requestedSeatsCount, Collections.emptyList());
     }
 
     public Map<String, Coach> getCoaches() {

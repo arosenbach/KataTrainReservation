@@ -5,7 +5,7 @@ public class Seat {
     private final int seatNumber;
     private String bookingRef = "";
 
-    public Seat(String coach, int seatNumber) {
+    public Seat(int seatNumber, String coach) {
         this.coach = coach;
         this.seatNumber = seatNumber;
     }
@@ -33,5 +33,14 @@ public class Seat {
 
     public boolean isAvailable() {
         return this.bookingRef.equals("");
+    }
+
+    public  boolean isReserved() {
+        return !this.bookingRef.equals("");
+    }
+
+    @Override
+    public String toString() {
+        return seatNumber + coach;
     }
 }

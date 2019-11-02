@@ -36,7 +36,7 @@ public class TrainDataServiceImpl implements TrainDataService {
         final List<Seat> seats = new ArrayList<>();
         for (Map.Entry<String, JsonValue> stuff : allStuffs) {
             final JsonObject seatJSon = stuff.getValue().asJsonObject();
-            final Seat seat = new Seat(seatJSon.getString("coach"), Integer.parseInt(seatJSon.getString("seat_number")));
+            final Seat seat = new Seat(Integer.parseInt(seatJSon.getString("seat_number")), seatJSon.getString("coach"));
             seats.add(seat);
 
             if (!seatJSon.getString("booking_reference").isEmpty()) {
@@ -55,7 +55,7 @@ public class TrainDataServiceImpl implements TrainDataService {
         assert response.getStatus() == Response.Status.OK.getStatusCode();
 
         final String trainTopology = response.readEntity(String.class);
-        return new Train(adaptTrainTopology(trainTopology));
+        return new Train(trainId, adaptTrainTopology(trainTopology));
     }
 
     @Override

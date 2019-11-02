@@ -1,6 +1,8 @@
 package coltrain.test.acceptance;
 
 import coltrain.BookingReferenceService;
+import coltrain.Reservation;
+import coltrain.ReservationFailure;
 import coltrain.Train;
 import coltrain.TrainDataService;
 import coltrain.TrainDataServiceImpl;
@@ -8,15 +10,20 @@ import coltrain.WebTicketManager;
 import coltrain.api.models.Seat;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
 public class ColtrainTest {
 
-    public static final String BOOKING_REFERENCE = "75bcd15";
+    private static final String BOOKING_REFERENCE = "75bcd15";
     private static final String EMPTY_BOOKING = "";
-    public static final String TRAIN_ID = "express_2000";
+    private static final String TRAIN_ID = "express_2000";
+    private static final Pattern SEAT_PATTERN = Pattern.compile("(\\d+)([A-Z])");
 
     @Test
     public void should_reserve_seats_when_train_is_empty() {
@@ -24,9 +31,16 @@ public class ColtrainTest {
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
         final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final String reservation = sut.reserve(TRAIN_ID, 3);
+        final Reservation reservation = sut.reserve(TRAIN_ID, 3);
+        assertEquals(new Reservation(TRAIN_ID, BOOKING_REFERENCE, seats("1A","2A","3A")), reservation);
+    }
 
-        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1A\", \"2A\", \"3A\"]}", reservation);
+    private List<Seat> seats(String... seats) {
+        return Arrays.stream(seats)
+                .map(SEAT_PATTERN::matcher)
+                .peek(Matcher::find)
+                .map(m -> new Seat(Integer.parseInt(m.group(1)),m.group(2)))
+                .collect(toList());
     }
 
     @Test
@@ -35,9 +49,8 @@ public class ColtrainTest {
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
         final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final String reservation = sut.reserve(TRAIN_ID, 3);
-
-        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + EMPTY_BOOKING + "\",\"seats\":[]}", reservation);
+        final Reservation reservation = sut.reserve(TRAIN_ID, 3);
+        assertEquals(new ReservationFailure(TRAIN_ID), reservation);
     }
 
 
@@ -47,9 +60,9 @@ public class ColtrainTest {
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
         final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final String reservation = sut.reserve(TRAIN_ID, 3);
+        final Reservation reservation = sut.reserve(TRAIN_ID, 3);
 
-        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1B\", \"2B\", \"3B\"]}", reservation);
+        assertEquals(new Reservation(TRAIN_ID, BOOKING_REFERENCE, seats("1B", "2B", "3B")), reservation);
     }
 
     private class FakeTrainDataService implements TrainDataService {
@@ -61,7 +74,7 @@ public class ColtrainTest {
 
         @Override
         public Train getTrain(final String trainId) {
-            return new Train(TrainDataServiceImpl.adaptTrainTopology(topology));
+            return new Train(trainId, TrainDataServiceImpl.adaptTrainTopology(topology));
         }
 
         @Override

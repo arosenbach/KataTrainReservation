@@ -1,6 +1,7 @@
 package coltrain.api.controllers;
 
-import coltrain.TrainDataServiceImpl;
+import coltrain.Reservation;
+import coltrain.ReservationAdapter;
 import coltrain.WebTicketManager;
 import coltrain.api.models.ReservationRequestDTO;
 
@@ -19,7 +20,8 @@ public class ReservationsController {
     @POST
     public String post(ReservationRequestDTO reservationRequest) {
         final WebTicketManager manager = new WebTicketManager();
-        return manager.reserve(reservationRequest.getTrainId(), reservationRequest.getNumberOfSeats());
+        final Reservation reservation = manager.reserve(reservationRequest.getTrainId(), reservationRequest.getNumberOfSeats());
+        return ReservationAdapter.toJSON(reservation);
     }
 
 }
