@@ -6,12 +6,18 @@ import java.util.List;
 
 public class ReservationAttempt {
     private final List<Seat> availableSeats;
+    private int requestedSeatsCount;
 
-    public ReservationAttempt(final List<Seat> availableSeats) {
+    public ReservationAttempt(final int requestedSeatsCount, final List<Seat> availableSeats) {
         this.availableSeats = availableSeats;
+        this.requestedSeatsCount = requestedSeatsCount;
     }
 
     public List<Seat> getAvailableSeats() {
         return this.availableSeats;
+    }
+
+    public boolean isFulfilled() {
+        return getAvailableSeats().size() == this.requestedSeatsCount;
     }
 }

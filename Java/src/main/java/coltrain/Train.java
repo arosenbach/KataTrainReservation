@@ -39,6 +39,6 @@ public class Train {
                 }
             }
         }
-        return new ReservationAttempt(availableSeats);
+        return new ReservationAttempt(requestedSeatsCount, availableSeats);
     }
 }

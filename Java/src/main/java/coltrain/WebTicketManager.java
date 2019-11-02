@@ -9,14 +9,11 @@ public class WebTicketManager {
     private static String uriBookingReferenceService = "http://localhost:8282";
     private static String uriTrainDataService = "http://localhost:8181";
     private final TrainDataService trainDataService;
-    private TrainCaching trainCaching;
     private BookingReferenceService bookingReferenceService;
 
     public WebTicketManager(final TrainDataService trainDataService, final BookingReferenceService bookingReferenceService) {
         this.trainDataService = trainDataService;
         this.bookingReferenceService = bookingReferenceService;
-        this.trainCaching = new TrainCaching();
-        this.trainCaching.clear();
     }
 
     public WebTicketManager() {
@@ -29,7 +26,7 @@ public class WebTicketManager {
 
             final ReservationAttempt reservationAttempt = train.buildReservationAttempt(requestedSeatsCount);
 
-            if (reservationAttempt.getAvailableSeats().size() == requestedSeatsCount) {
+            if (reservationAttempt.isFulfilled()) {
 
                 String bookingRef = bookingReferenceService.getBookingReference();
 
@@ -37,7 +34,6 @@ public class WebTicketManager {
                     availableSeat.setBookingRef(bookingRef);
                 }
 
-                trainCaching.save(trainId, train, bookingRef);
                 trainDataService.bookSeats(trainId, reservationAttempt.getAvailableSeats(), bookingRef);
 
 
