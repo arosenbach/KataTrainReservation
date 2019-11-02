@@ -20,4 +20,10 @@ public class ReservationAttempt {
     public boolean isFulfilled() {
         return getAvailableSeats().size() == this.requestedSeatsCount;
     }
+
+    public void assignBookingReference(final String bookingRef) {
+        for (Seat availableSeat : getAvailableSeats()) {
+            availableSeat.setBookingRef(bookingRef);
+        }
+    }
 }

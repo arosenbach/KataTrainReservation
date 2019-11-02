@@ -30,9 +30,7 @@ public class WebTicketManager {
 
                 String bookingRef = bookingReferenceService.getBookingReference();
 
-                for (Seat availableSeat : reservationAttempt.getAvailableSeats()) {
-                    availableSeat.setBookingRef(bookingRef);
-                }
+                reservationAttempt.assignBookingReference(bookingRef);
 
                 trainDataService.bookSeats(trainId, reservationAttempt.getAvailableSeats(), bookingRef);
 
