@@ -2,13 +2,27 @@ package coltrain;
 
 import coltrain.api.models.Seat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Train {
     private static final double CAPACITY_THRESHOLD = 0.70;
     private final List<Seat> seats;
+    private HashMap<String, Coach> coaches;
 
     public Train(final List<Seat> seats) {
+        this.coaches = new HashMap<>();
+
+        for (Seat seat : seats){
+            final String coachName = seat.getCoachName();
+            if(!coaches.containsKey(coachName)){
+                coaches.put(coachName, new Coach(coachName));
+            }
+            coaches.get(coachName).addSeat(seat);
+        }
+
         this.seats = seats;
     }
 
@@ -40,5 +54,9 @@ public class Train {
             }
         }
         return new ReservationAttempt(requestedSeatsCount, availableSeats);
+    }
+
+    public Map<String, Coach> getCoaches() {
+        return this.coaches;
     }
 }
