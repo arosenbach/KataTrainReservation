@@ -27,23 +27,23 @@ public class WebTicketManager {
         final Train train = trainDataService.getTrain(trainId);
         if (train.doNotExceedCapacityThreshold(requestedSeatsCount)) {
 
-            final List<Seat> availableSeats = train.findAvailableSeats(requestedSeatsCount);
+            final ReservationAttempt reservationAttempt = train.buildReservationAttempt(requestedSeatsCount);
 
-            if (availableSeats.size() == requestedSeatsCount) {
+            if (reservationAttempt.getAvailableSeats().size() == requestedSeatsCount) {
 
                 String bookingRef = bookingReferenceService.getBookingReference();
 
-                for (Seat availableSeat : availableSeats) {
+                for (Seat availableSeat : reservationAttempt.getAvailableSeats()) {
                     availableSeat.setBookingRef(bookingRef);
                 }
 
                 trainCaching.save(trainId, train, bookingRef);
-                trainDataService.bookSeats(trainId, availableSeats, bookingRef);
+                trainDataService.bookSeats(trainId, reservationAttempt.getAvailableSeats(), bookingRef);
 
 
                 return "{\"trainId\": \"" + trainId + "\"," +
                         "\"bookingReference\": \"" + bookingRef + "\"," +
-                        "\"seats\":" + dumpSeats(availableSeats) +
+                        "\"seats\":" + dumpSeats(reservationAttempt.getAvailableSeats()) +
                         "}";
             }
         }
