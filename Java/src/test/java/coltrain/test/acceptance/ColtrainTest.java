@@ -1,13 +1,14 @@
 package coltrain.test.acceptance;
 
+import coltrain.IReservationService;
+import coltrain.ReservationService;
 import coltrain.domain.BookingReferenceService;
-import coltrain.domain.Reservation;
-import coltrain.domain.ReservationFailure;
+import coltrain.domain.Seat;
 import coltrain.domain.Train;
 import coltrain.domain.TrainDataService;
+import coltrain.infra.ReservationAdapter;
+import coltrain.infra.ReservationRequestDTO;
 import coltrain.infra.TrainDataServiceImpl;
-import coltrain.WebTicketManager;
-import coltrain.domain.Seat;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -27,12 +28,19 @@ public class ColtrainTest {
 
     @Test
     public void should_reserve_seats_when_train_is_empty() {
+        // Step 1 : instantiate de "right side" of the hexagon
         final TrainDataService trainDataService = new FakeTrainDataService(TrainTopology.EMPTY_TRAIN);
-        final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
-        final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
+        final BookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
 
-        final Reservation reservation = sut.reserve(TRAIN_ID, 3);
-        assertEquals(new Reservation(TRAIN_ID, BOOKING_REFERENCE, seats("1A","2A","3A")), reservation);
+        // Step 2 : instantiate the hexagon (domain)
+        final IReservationService hexagon = new ReservationService(trainDataService, bookingReferenceService);
+
+        // Step 3 : instantiate de "left side" of the hexagon
+        final ReservationAdapter sut = new ReservationAdapter(hexagon);
+
+        final String resultJSON = sut.post(new ReservationRequestDTO(TRAIN_ID, 3));
+
+        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1A\", \"2A\", \"3A\"]}", resultJSON);
     }
 
     private List<Seat> seats(String... seats) {
@@ -45,24 +53,35 @@ public class ColtrainTest {
 
     @Test
     public void should_not_reserve_seats_when_train_is_70_percent_booked() {
+        // Step 1 : instantiate de "right side" of the hexagon
         final TrainDataService trainDataService = new FakeTrainDataService(TrainTopology.WITH_10_SEATS_AND_6_ALREADY_BOOKED);
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
-        final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final Reservation reservation = sut.reserve(TRAIN_ID, 3);
-        assertEquals(new ReservationFailure(TRAIN_ID), reservation);
+        // Step 2 : instantiate the hexagon (domain)
+        final IReservationService hexagon = new ReservationService(trainDataService, bookingReferenceService);
+
+        // Step 3 : instantiate de "left side" of the hexagon
+        final ReservationAdapter sut = new ReservationAdapter(hexagon);
+
+        final String resultJSON = sut.post(new ReservationRequestDTO(TRAIN_ID, 3));
+        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + EMPTY_BOOKING + "\",\"seats\":[]}", resultJSON);
     }
 
 
     @Test
     public void should_reserve_all_seats_in_the_same_coach() {
+        // Step 1 : instantiate de "right side" of the hexagon
         final TrainDataService trainDataService = new FakeTrainDataService(TrainTopology.WITH_COACH_A_HAVING_1_FREE_SEAT_AND_COACH_B_EMPTY);
         final FakeBookingReferenceService bookingReferenceService = new FakeBookingReferenceService(BOOKING_REFERENCE);
-        final WebTicketManager sut = new WebTicketManager(trainDataService, bookingReferenceService);
 
-        final Reservation reservation = sut.reserve(TRAIN_ID, 3);
+        // Step 2 : instantiate the hexagon (domain)
+        final ReservationService hexagon = new ReservationService(trainDataService, bookingReferenceService);
 
-        assertEquals(new Reservation(TRAIN_ID, BOOKING_REFERENCE, seats("1B", "2B", "3B")), reservation);
+        // Step 3 : instantiate de "left side" of the hexagon
+        final ReservationAdapter sut = new ReservationAdapter(hexagon);
+
+        final String resultJSON = sut.post(new ReservationRequestDTO(TRAIN_ID, 3));
+        assertEquals("{\"trainId\": \"" + TRAIN_ID + "\",\"bookingReference\": \"" + BOOKING_REFERENCE + "\",\"seats\":[\"1B\", \"2B\", \"3B\"]}", resultJSON);
     }
 
     private class FakeTrainDataService implements TrainDataService {

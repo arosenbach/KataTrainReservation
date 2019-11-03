@@ -4,6 +4,11 @@ public class ReservationRequestDTO {
     private String trainId;
     private int numberOfSeats;
 
+    public ReservationRequestDTO(final String trainId, final int numberOfSeats) {
+        this.trainId = trainId;
+        this.numberOfSeats = numberOfSeats;
+    }
+
     public String getTrainId() {
         return this.trainId;
     }

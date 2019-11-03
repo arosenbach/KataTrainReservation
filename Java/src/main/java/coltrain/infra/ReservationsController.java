@@ -1,7 +1,6 @@
 package coltrain.infra;
 
-import coltrain.WebTicketManager;
-import coltrain.domain.Reservation;
+import coltrain.ReservationService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -13,13 +12,18 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ReservationsController {
-    public ReservationsController() { }
+
+    private final ReservationService reservationService;
+    private final ReservationAdapter reservationAdapter;
+
+    public ReservationsController() {
+        reservationService = new ReservationService();
+        reservationAdapter = new ReservationAdapter(this.reservationService);
+    }
 
     @POST
     public String post(ReservationRequestDTO reservationRequest) {
-        final WebTicketManager manager = new WebTicketManager();
-        final Reservation reservation = manager.reserve(reservationRequest.getTrainId(), reservationRequest.getNumberOfSeats());
-        return ReservationAdapter.toJSON(reservation);
+        return this.reservationAdapter.post(reservationRequest);
     }
 
 }
