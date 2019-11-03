@@ -1,5 +1,14 @@
 package coltrain;
 
+import coltrain.domain.BookingReferenceService;
+import coltrain.domain.Reservation;
+import coltrain.domain.ReservationAttempt;
+import coltrain.domain.ReservationFailure;
+import coltrain.domain.Train;
+import coltrain.domain.TrainDataService;
+import coltrain.infra.BookingReferenceServiceImpl;
+import coltrain.infra.TrainDataServiceImpl;
+
 public class WebTicketManager {
 
     private static String uriBookingReferenceService = "http://localhost:8282";

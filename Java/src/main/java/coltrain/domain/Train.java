@@ -1,6 +1,4 @@
-package coltrain;
-
-import coltrain.api.models.Seat;
+package coltrain.domain;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +20,7 @@ public class Train {
         for (Seat seat : seats) {
             final String coachName = seat.getCoachName();
             if (!coaches.containsKey(coachName)) {
-                coaches.put(coachName, new Coach(trainId, coachName));
+                coaches.put(coachName, new Coach(trainId));
             }
             coaches.get(coachName).addSeat(seat);
         }

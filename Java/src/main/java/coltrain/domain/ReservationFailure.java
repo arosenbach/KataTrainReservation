@@ -1,4 +1,4 @@
-package coltrain;
+package coltrain.domain;
 
 import java.util.Collections;
 

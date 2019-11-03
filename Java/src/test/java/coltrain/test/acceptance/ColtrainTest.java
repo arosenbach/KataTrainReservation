@@ -1,13 +1,13 @@
 package coltrain.test.acceptance;
 
-import coltrain.BookingReferenceService;
-import coltrain.Reservation;
-import coltrain.ReservationFailure;
-import coltrain.Train;
-import coltrain.TrainDataService;
-import coltrain.TrainDataServiceImpl;
+import coltrain.domain.BookingReferenceService;
+import coltrain.domain.Reservation;
+import coltrain.domain.ReservationFailure;
+import coltrain.domain.Train;
+import coltrain.domain.TrainDataService;
+import coltrain.infra.TrainDataServiceImpl;
 import coltrain.WebTicketManager;
-import coltrain.api.models.Seat;
+import coltrain.domain.Seat;
 import org.junit.Test;
 
 import java.util.Arrays;

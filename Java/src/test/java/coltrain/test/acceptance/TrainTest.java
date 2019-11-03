@@ -1,8 +1,8 @@
 package coltrain.test.acceptance;
 
-import coltrain.Coach;
-import coltrain.Train;
-import coltrain.TrainDataServiceImpl;
+import coltrain.domain.Coach;
+import coltrain.domain.Train;
+import coltrain.infra.TrainDataServiceImpl;
 import org.junit.Test;
 
 import java.util.Map;

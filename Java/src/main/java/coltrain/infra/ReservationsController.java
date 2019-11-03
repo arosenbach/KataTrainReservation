@@ -1,9 +1,7 @@
-package coltrain.api.controllers;
+package coltrain.infra;
 
-import coltrain.Reservation;
-import coltrain.ReservationAdapter;
 import coltrain.WebTicketManager;
-import coltrain.api.models.ReservationRequestDTO;
+import coltrain.domain.Reservation;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

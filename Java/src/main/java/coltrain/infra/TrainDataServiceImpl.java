@@ -1,6 +1,8 @@
-package coltrain;
+package coltrain.infra;
 
-import coltrain.api.models.Seat;
+import coltrain.domain.Seat;
+import coltrain.domain.Train;
+import coltrain.domain.TrainDataService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 

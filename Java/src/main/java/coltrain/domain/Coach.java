@@ -1,18 +1,14 @@
-package coltrain;
-
-import coltrain.api.models.Seat;
+package coltrain.domain;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Coach {
-    private final String coachName;
     private List<Seat> seats;
     private String trainId;
 
-    public Coach(final String trainId, final String coachName) {
+    public Coach(final String trainId) {
         this.trainId = trainId;
-        this.coachName = coachName;
         this.seats = new ArrayList<>();
     }
 

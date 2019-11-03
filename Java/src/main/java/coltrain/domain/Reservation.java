@@ -1,6 +1,4 @@
-package coltrain;
-
-import coltrain.api.models.Seat;
+package coltrain.domain;
 
 import java.util.List;
 import java.util.Objects;

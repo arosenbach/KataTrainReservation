@@ -1,6 +1,7 @@
-package coltrain;
+package coltrain.infra;
 
-import coltrain.api.models.Seat;
+import coltrain.domain.Seat;
+import coltrain.domain.Reservation;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package coltrain.api.models;
+package coltrain.infra;
 
 public class ReservationRequestDTO {
     private String trainId;

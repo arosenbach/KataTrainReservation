@@ -1,5 +1,6 @@
-package coltrain;
+package coltrain.infra;
 
+import coltrain.domain.BookingReferenceService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 
@@ -11,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 public class BookingReferenceServiceImpl implements BookingReferenceService {
+    private static final String BOOKING_REFERENCE_PATH = "booking_reference";
     private String uriBookingReferenceService;
 
     public BookingReferenceServiceImpl(final String uriBookingReferenceService) {
@@ -19,13 +21,10 @@ public class BookingReferenceServiceImpl implements BookingReferenceService {
 
     @Override
     public String getBookingReference() {
-        Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-        WebTarget webTarget = client.target(uriBookingReferenceService).path("booking_reference");
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.get();
-
-        assert response.getStatus() == Response.Status.OK.getStatusCode();
-
+        final Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
+        final WebTarget webTarget = client.target(uriBookingReferenceService).path(BOOKING_REFERENCE_PATH);
+        final Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+        final Response response = invocationBuilder.get();
         return response.readEntity(String.class);
     }
 }
