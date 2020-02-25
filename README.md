@@ -6,7 +6,7 @@ Coltrain is a web application that provides users with a REST API to book train 
 * get the topology of a train (coaches, seats identifier and availability);
 * post the actual reservation.
 
-Call to these APIs are billed; and the cost is high! 
+**Call to these APIs are billed**; and the cost is high! Our customer complains about the current cost of our usage of the railway operator, despite the cache mechanism that was implemented to solve the issue. 
 
 You're working on the "Coltrain" application. Your task is to:
  - understand why Coltrain does so many calls to the railway operator API;
