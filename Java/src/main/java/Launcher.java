@@ -19,7 +19,7 @@ public class Launcher {
             server.start();
 
             System.out.println(String.format(
-                    "TrainTrain app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
+                    "Coltrain app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
                     BASE_URI));
 
             System.in.read();
