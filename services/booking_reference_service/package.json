@@ -2,7 +2,7 @@
   "name": "booking_reference_service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "indexBooking.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

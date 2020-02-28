@@ -30,6 +30,10 @@ function checkSeats(trainId, seats, res){
     return true;
 }
 
+function checkBookingReference(bookingReference) {
+    return !!bookingReference;
+}
+
 app.listen(8181, () => {
     console.log("Server running on port 8181");
 });
@@ -39,11 +43,16 @@ app.get("/data_for_train/:trainId", (req, res) => {
 });
 
 app.post('/reserve', function (req, res) {
-    const {trainId,bookingReference, seats} = req.body;
+    const {trainId, bookingReference, seats} = req.body;
     if(!checkTrainId(trainId,res)){
         return;
     }
     if(!checkSeats(trainId, seats, res)){
+        return;
+    }
+
+    if(!checkBookingReference(bookingReference)){
+        res.status(422).send(`Invalid Booking Ref "${bookingReference}"`);
         return;
     }
     const trainSeats = trains[trainId].seats;
