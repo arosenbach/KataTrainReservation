@@ -12,8 +12,9 @@ import java.util.List;
 
 public class WebTicketManager {
 
-    private static String uriBookingReferenceService = "http://localhost:8282";
+    static String uriBookingReferenceService = "http://localhost:8282";
     private static String uriTrainDataService = "http://localhost:8181";
+    private final Dependency dependency = new Dependency();
     private TrainCaching trainCaching;
 
     public WebTicketManager() {
@@ -61,7 +62,7 @@ public class WebTicketManager {
                 sb.append("\",");
 
                 Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-                bookingRef = getBookRef(client);
+                bookingRef = dependency.getBookRef(client);
 
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
@@ -155,17 +156,6 @@ public class WebTicketManager {
         WebTarget webTarget = client.target(uriTrainDataService).path("data_for_train/" + train);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
-        assert response.getStatus() == Response.Status.OK.getStatusCode();
-
-        return response.readEntity(String.class);
-    }
-
-
-    private String getBookRef(Client client) {
-        WebTarget webTarget = client.target(uriBookingReferenceService).path("booking_reference");
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-        Response response = invocationBuilder.get();
-
         assert response.getStatus() == Response.Status.OK.getStatusCode();
 
         return response.readEntity(String.class);
