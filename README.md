@@ -26,7 +26,13 @@ There are various business rules and policies around which seats may be reserved
 
 The ultimate goal of this kata is revamp the project into an [hexagonal architecture](https://softwarecampament.wordpress.com/portsadapters/).
 
-## Coltrain Service
+## Services definition
+
+The services used in this kata are defined in the `KataTrainApp.yaml` file. You may open it with [Postman](https://www.postman.com/) or [Swagger-Ui](https://swagger.io/tools/swagger-ui/) to test the services, after running them.
+
+These services, and the way to run them, are further detailed in the sections below.
+
+### Coltrain Service
 
 The Coltrain service responds to a HTTP POST request that comes with form data telling you which train the customer wants to reserve seats on, and how many they want. It should return a json document detailing the reservation that has been made.
 
@@ -106,3 +112,4 @@ The service has one additional method, that will remove all reservations on a pa
 ```bash
 http://localhost:8181/reset/express_2000
 ```
+

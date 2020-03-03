@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: KataTrainApp
+  contact: {}
+  version: '1.0'
+servers:
+- url: http://localhost:8282
+  variables: {}
+- url: http://localhost:8181
+  variables: {}
+- url: http://localhost:9991/api
+  variables: {}
+tags:
+  - name: "Booking"
+    description: "Booking service"
+  - name: "Reservations"
+    description: "Reservation API"  
+  - name: "Data"
+    description: "Data service"
+paths:
+  /booking_reference:
+    get:
+      tags:
+      - Booking
+      summary: Get booking reference
+      operationId: Getbookingreference
+      parameters: []
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+      - url: http://localhost:8282
+        variables: {}
+  /data_for_train/{trainId}:
+    get:
+      tags:
+      - Data
+      summary: Get train data
+      operationId: Gettraindata
+      parameters:
+      - name: trainId
+        in: path
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: express_2000
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+      - url: http://localhost:8181
+        variables: {}
+  /reserve:
+    post:
+      tags:
+      - Reservations
+      summary: Reserve train
+      operationId: Reservetrain
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservetrainRequest'
+            example:
+              bookingReference: AZERTY
+              seats:
+              - 1A
+              - 2A
+              - 3A
+              trainId: express_2000
+        required: true
+        x-send-file-in-body: false
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+      - url: http://localhost:8181
+        variables: {}
+  /reservations:
+    post:
+      tags:
+      - Reservations
+      summary: make a reservation via ColTrain
+      operationId: makeareservationviaColTrain
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/makeareservationviaColTrainRequest'
+            example:
+              trainId: express_2000
+              numberOfSeats: 3
+        required: true
+        x-send-file-in-body: false
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+      servers:
+      - url: http://localhost:9991/api
+        variables: {}
+components:
+  schemas:
+    ReservetrainRequest:
+      title: ReservetrainRequest
+      required:
+      - bookingReference
+      - seats
+      - trainId
+      type: object
+      properties:
+        bookingReference:
+          type: string
+        seats:
+          type: array
+          items:
+            type: string
+          description: ''
+        trainId:
+          type: string
+      example:
+        bookingReference: AZERTY
+        seats:
+        - 1A
+        - 2A
+        - 3A
+        trainId: express_2000
+    makeareservationviaColTrainRequest:
+      title: makeareservationviaColTrainRequest
+      required:
+      - trainId
+      - numberOfSeats
+      type: object
+      properties:
+        trainId:
+          type: string
+        numberOfSeats:
+          type: integer
+          format: int32
+      example:
+        trainId: express_2000
+        numberOfSeats: 3
