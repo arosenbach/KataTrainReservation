@@ -6,11 +6,12 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-public class Dependency {
-    public Dependency() {
+public class BookingRefServiceImpl implements BookingRefService {
+    public BookingRefServiceImpl() {
     }
 
-    String getBookRef(Client client) {
+    @Override
+    public String getBookRef(Client client) {
         WebTarget webTarget = client.target(WebTicketManager.uriBookingReferenceService).path("booking_reference");
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();

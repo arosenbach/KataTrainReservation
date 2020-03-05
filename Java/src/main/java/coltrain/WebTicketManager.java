@@ -14,12 +14,17 @@ public class WebTicketManager {
 
     static String uriBookingReferenceService = "http://localhost:8282";
     private static String uriTrainDataService = "http://localhost:8181";
-    private final Dependency dependency = new Dependency();
+    private final BookingRefService bookingRefService;
     private TrainCaching trainCaching;
 
     public WebTicketManager() {
+        this(new BookingRefServiceImpl());
+    }
+
+    public WebTicketManager(BookingRefService bookingRefService) {
         this.trainCaching = new TrainCaching();
         this.trainCaching.clear();
+        this.bookingRefService = bookingRefService;
     }
 
     public String reserve(String train, int seats) {
@@ -62,7 +67,7 @@ public class WebTicketManager {
                 sb.append("\",");
 
                 Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-                bookingRef = dependency.getBookRef(client);
+                bookingRef = bookingRefService.getBookRef(client);
 
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
