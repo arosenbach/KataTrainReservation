@@ -2,7 +2,7 @@ package coltrain;
 
 import javax.ws.rs.client.Client;
 
-public interface BookingRefService {
+public interface BookingReferenceService {
 
     String getBookRef(Client client);
 }

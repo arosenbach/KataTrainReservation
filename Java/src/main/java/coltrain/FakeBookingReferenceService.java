@@ -2,7 +2,7 @@ package coltrain;
 
 import javax.ws.rs.client.Client;
 
-public class FakeBookingRefService implements BookingRefService {
+public class FakeBookingReferenceService implements BookingReferenceService {
 
 
     @Override
