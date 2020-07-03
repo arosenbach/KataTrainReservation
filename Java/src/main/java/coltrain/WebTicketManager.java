@@ -1,7 +1,9 @@
 package coltrain;
 
+import coltrain.api.controllers.ReservationsController;
 import coltrain.api.models.Seat;
 
+import java.util.Collections;
 import java.util.List;
 
 public class WebTicketManager {
@@ -23,7 +25,7 @@ public class WebTicketManager {
         this(new TrainDataServiceImpl(), new BookingReferenceServiceImpl());
     }
 
-    public String reserve(String trainId, int seats) {
+    public Reservation reserve(String trainId, int seats) {
         Train trainInst = getTrain(trainId);
 
         if (trainInst.canBook(seats)) {
@@ -31,7 +33,7 @@ public class WebTicketManager {
             final List<Seat> availableSeats = trainInst.getSeats(seats);
 
             if (availableSeats.size() != seats) {
-                return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
+                return new Reservation(trainId, Collections.<Seat>emptyList(), "");
             } else {
 
                 String bookingRef = bookingReferenceService.getBookRef();
@@ -47,25 +49,12 @@ public class WebTicketManager {
 
                     trainDataService.doReservation(trainId, availableSeats, bookingRef);
 
-                    return getResponse(new Reservation(trainId, availableSeats, bookingRef));
+                    return new Reservation(trainId, availableSeats, bookingRef);
                 }
             }
         }
 
-        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
-    }
-
-    private String getResponse(Reservation reservation) {
-        StringBuilder sb = new StringBuilder("{\"trainId\": \"");
-        sb.append(reservation.getTrainId());
-        sb.append("\",");
-        sb.append("\"bookingReference\": \"");
-        sb.append(reservation.getBookingRef());
-        sb.append("\",");
-        sb.append("\"seats\":");
-        sb.append(dumpSeats(reservation.getAvailableSeats()));
-        sb.append("}");
-        return sb.toString();
+        return new Reservation(trainId, Collections.<Seat>emptyList(), "");
     }
 
     private Train getTrain(String trainId) {
@@ -74,26 +63,7 @@ public class WebTicketManager {
         return new Train(jsonTrain);
     }
 
-    private String dumpSeats(List<Seat> seats) {
-        StringBuilder sb = new StringBuilder("[");
-
-        boolean firstTime = true;
-        for (Seat seat : seats) {
-            if (!firstTime) {
-                sb.append(", ");
-            } else {
-                firstTime = false;
-            }
-
-            sb.append(String.format("\"%s%s\"", seat.getSeatNumber(), seat.getCoachName()));
-        }
-
-        sb.append("]");
-
-        return sb.toString();
-    }
-
-    private static class Reservation {
+    public static class Reservation {
         private final String trainId;
         private final List<Seat> availableSeats;
         private final String bookingRef;
