@@ -24,25 +24,19 @@ public class WebTicketManager {
         this(new TrainDataServiceImpl(), new BookingReferenceServiceImpl());
     }
 
-    public String reserve(String train, int seats) {
-        List<Seat> availableSeats = new ArrayList<Seat>();
+    public String reserve(String trainId, int seats) {
+        List<Seat> availableSeats = new ArrayList<>();
         int count = 0;
-        String result = "";
         String bookingRef;
+        Train trainInst = getTrain(trainId);
 
-        // get the train
-        String jsonTrain = trainDataService.getTrain(train);
-
-        result = jsonTrain;
-
-        Train trainInst = new Train(jsonTrain);
-        if ((trainInst.getReservedSeats() + seats) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat())) {
+        if (canBook(seats, trainInst)) {
             int numberOfReserv = 0;
 
             // find seats to reserve
             for (int index = 0, i = 0; index < trainInst.getSeats().size(); index++) {
                 Seat each = (Seat) trainInst.getSeats().toArray()[index];
-                if (each.getBookingRef() == "") {
+                if ("".equals(each.getBookingRef())) {
                     i++;
                     if (i <= seats) {
                         availableSeats.add(each);
@@ -50,17 +44,15 @@ public class WebTicketManager {
                 }
             }
 
-            for (Seat a : availableSeats) {
+            for (Seat ignored : availableSeats) {
                 count++;
             }
 
-            int reservedSeats = 0;
-
             if (count != seats) {
-                return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", train);
+                return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
                 StringBuilder sb = new StringBuilder("{\"trainId\": \"");
-                sb.append(train);
+                sb.append(trainId);
                 sb.append("\",");
 
                 bookingRef = bookingReferenceService.getBookRef();
@@ -68,7 +60,6 @@ public class WebTicketManager {
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
                     numberOfReserv++;
-                    reservedSeats++;
                 }
 
                 sb.append("\"bookingReference\": \"");
@@ -76,9 +67,9 @@ public class WebTicketManager {
                 sb.append("\",");
 
                 if (numberOfReserv == seats) {
-                    trainCaching.save(train, trainInst, bookingRef);
+                    trainCaching.save(trainId, trainInst, bookingRef);
 
-                    trainDataService.doReservation(train, availableSeats, bookingRef);
+                    trainDataService.doReservation(trainId, availableSeats, bookingRef);
 
                     sb.append("\"seats\":");
                     sb.append(dumpSeats(availableSeats));
@@ -90,8 +81,18 @@ public class WebTicketManager {
             }
         }
 
-        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", train);
+        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
 
+    }
+
+    private boolean canBook(int seats, Train trainInst) {
+        return (trainInst.getReservedSeats() + seats) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat());
+    }
+
+    private Train getTrain(String trainId) {
+        // get the train
+        String jsonTrain = trainDataService.getTrain(trainId);
+        return new Train(jsonTrain);
     }
 
     private String dumpSeats(List<Seat> seats) {
