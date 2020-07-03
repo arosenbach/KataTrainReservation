@@ -47,7 +47,7 @@ public class WebTicketManager {
 
                     trainDataService.doReservation(trainId, availableSeats, bookingRef);
 
-                    return getResponse(trainId, availableSeats, bookingRef);
+                    return getResponse(new Reservation(trainId, availableSeats, bookingRef));
                 }
             }
         }
@@ -55,15 +55,15 @@ public class WebTicketManager {
         return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
     }
 
-    private String getResponse(String trainId, List<Seat> availableSeats, String bookingRef) {
+    private String getResponse(Reservation reservation) {
         StringBuilder sb = new StringBuilder("{\"trainId\": \"");
-        sb.append(trainId);
+        sb.append(reservation.getTrainId());
         sb.append("\",");
         sb.append("\"bookingReference\": \"");
-        sb.append(bookingRef);
+        sb.append(reservation.getBookingRef());
         sb.append("\",");
         sb.append("\"seats\":");
-        sb.append(dumpSeats(availableSeats));
+        sb.append(dumpSeats(reservation.getAvailableSeats()));
         sb.append("}");
         return sb.toString();
     }
@@ -93,5 +93,27 @@ public class WebTicketManager {
         return sb.toString();
     }
 
+    private static class Reservation {
+        private final String trainId;
+        private final List<Seat> availableSeats;
+        private final String bookingRef;
 
+        private Reservation(String trainId, List<Seat> availableSeats, String bookingRef) {
+            this.trainId = trainId;
+            this.availableSeats = availableSeats;
+            this.bookingRef = bookingRef;
+        }
+
+        public String getTrainId() {
+            return trainId;
+        }
+
+        public List<Seat> getAvailableSeats() {
+            return availableSeats;
+        }
+
+        public String getBookingRef() {
+            return bookingRef;
+        }
+    }
 }
