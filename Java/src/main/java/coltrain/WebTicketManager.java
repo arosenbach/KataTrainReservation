@@ -26,16 +26,13 @@ public class WebTicketManager {
     public String reserve(String trainId, int seats) {
         Train trainInst = getTrain(trainId);
 
-        if (canBook(seats, trainInst)) {
+        if (trainInst.canBook(seats)) {
 
             final List<Seat> availableSeats = trainInst.getSeats(seats);
 
             if (availableSeats.size() != seats) {
                 return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
-                StringBuilder sb = new StringBuilder("{\"trainId\": \"");
-                sb.append(trainId);
-                sb.append("\",");
 
                 String bookingRef = bookingReferenceService.getBookRef();
 
@@ -45,31 +42,30 @@ public class WebTicketManager {
                     numberOfReserv++;
                 }
 
-                sb.append("\"bookingReference\": \"");
-                sb.append(bookingRef);
-                sb.append("\",");
-
                 if (numberOfReserv == seats) {
                     trainCaching.save(trainId, trainInst, bookingRef);
 
                     trainDataService.doReservation(trainId, availableSeats, bookingRef);
 
-                    sb.append("\"seats\":");
-                    sb.append(dumpSeats(availableSeats));
-                    sb.append("}");
-
-
-                    return sb.toString();
+                    return getResponse(trainId, availableSeats, bookingRef);
                 }
             }
         }
 
         return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
-
     }
 
-    private boolean canBook(int seats, Train trainInst) {
-        return (trainInst.getReservedSeats() + seats) <= Math.floor(ThreasholdManager.getMaxRes() * trainInst.getMaxSeat());
+    private String getResponse(String trainId, List<Seat> availableSeats, String bookingRef) {
+        StringBuilder sb = new StringBuilder("{\"trainId\": \"");
+        sb.append(trainId);
+        sb.append("\",");
+        sb.append("\"bookingReference\": \"");
+        sb.append(bookingRef);
+        sb.append("\",");
+        sb.append("\"seats\":");
+        sb.append(dumpSeats(availableSeats));
+        sb.append("}");
+        return sb.toString();
     }
 
     private Train getTrain(String trainId) {
