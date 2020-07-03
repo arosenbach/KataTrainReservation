@@ -52,4 +52,19 @@ public class Train {
     public int getMaxSeat() {
         return this.maxSeat;
     }
+
+    List<Seat> getSeats(int seats) {
+        // find seats to reserve
+        List<Seat> availableSeats = new ArrayList<>();
+        for (int index = 0, i = 0; index < getSeats().size(); index++) {
+            Seat each = (Seat) getSeats().toArray()[index];
+            if ("".equals(each.getBookingRef())) {
+                i++;
+                if (i <= seats) {
+                    availableSeats.add(each);
+                }
+            }
+        }
+        return availableSeats;
+    }
 }

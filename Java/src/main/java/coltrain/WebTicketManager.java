@@ -2,7 +2,6 @@ package coltrain;
 
 import coltrain.api.models.Seat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WebTicketManager {
@@ -25,38 +24,22 @@ public class WebTicketManager {
     }
 
     public String reserve(String trainId, int seats) {
-        List<Seat> availableSeats = new ArrayList<>();
-        int count = 0;
-        String bookingRef;
         Train trainInst = getTrain(trainId);
 
         if (canBook(seats, trainInst)) {
-            int numberOfReserv = 0;
 
-            // find seats to reserve
-            for (int index = 0, i = 0; index < trainInst.getSeats().size(); index++) {
-                Seat each = (Seat) trainInst.getSeats().toArray()[index];
-                if ("".equals(each.getBookingRef())) {
-                    i++;
-                    if (i <= seats) {
-                        availableSeats.add(each);
-                    }
-                }
-            }
+            final List<Seat> availableSeats = trainInst.getSeats(seats);
 
-            for (Seat ignored : availableSeats) {
-                count++;
-            }
-
-            if (count != seats) {
+            if (availableSeats.size() != seats) {
                 return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"\", \"seats\":[]}", trainId);
             } else {
                 StringBuilder sb = new StringBuilder("{\"trainId\": \"");
                 sb.append(trainId);
                 sb.append("\",");
 
-                bookingRef = bookingReferenceService.getBookRef();
+                String bookingRef = bookingReferenceService.getBookRef();
 
+                int numberOfReserv = 0;
                 for (Seat availableSeat : availableSeats) {
                     availableSeat.setBookingRef(bookingRef);
                     numberOfReserv++;
