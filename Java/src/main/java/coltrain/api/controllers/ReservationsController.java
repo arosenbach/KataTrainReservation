@@ -1,6 +1,7 @@
 package coltrain.api.controllers;
 
 import coltrain.WebTicketManager;
+import coltrain.api.models.Reservation;
 import coltrain.api.models.ReservationRequestDTO;
 import coltrain.api.models.Seat;
 
@@ -24,7 +25,7 @@ public class ReservationsController {
         return toJsonString(manager.reserve(reservationRequest.getTrainId(), reservationRequest.getNumberOfSeats()));
     }
 
-    public static String toJsonString(WebTicketManager.Reservation reservation) {
+    public static String toJsonString(Reservation reservation) {
         return "{\"trainId\": \"" + reservation.getTrainId() +
                 "\"," +
                 "\"bookingReference\": \"" +

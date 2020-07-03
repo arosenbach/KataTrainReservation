@@ -1,6 +1,6 @@
 package coltrain;
 
-import coltrain.api.controllers.ReservationsController;
+import coltrain.api.models.Reservation;
 import coltrain.api.models.Seat;
 
 import java.util.Collections;
@@ -63,27 +63,4 @@ public class WebTicketManager {
         return new Train(jsonTrain);
     }
 
-    public static class Reservation {
-        private final String trainId;
-        private final List<Seat> availableSeats;
-        private final String bookingRef;
-
-        private Reservation(String trainId, List<Seat> availableSeats, String bookingRef) {
-            this.trainId = trainId;
-            this.availableSeats = availableSeats;
-            this.bookingRef = bookingRef;
-        }
-
-        public String getTrainId() {
-            return trainId;
-        }
-
-        public List<Seat> getAvailableSeats() {
-            return availableSeats;
-        }
-
-        public String getBookingRef() {
-            return bookingRef;
-        }
-    }
 }
