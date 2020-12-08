@@ -1,4 +1,4 @@
-package models;
+package domain.models;
 
 public class Seat {
     private final String coach;

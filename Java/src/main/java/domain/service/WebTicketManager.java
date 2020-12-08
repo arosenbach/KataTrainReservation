@@ -1,16 +1,13 @@
-package models;
+package domain.service;
 
-import service.BookingReferenceService;
-import service.ReservationManager;
-import service.TrainDataService;
+import domain.models.*;
 
 import java.util.Collections;
 import java.util.List;
 
 public class WebTicketManager implements ReservationManager {
 
-    public static String uriBookingReferenceService = "http://localhost:8282";
-    public static String uriTrainDataService = "http://localhost:8181";
+
     private final TrainDataService trainDataService;
     private TrainCaching trainCaching;
     private BookingReferenceService bookingReferenceService;

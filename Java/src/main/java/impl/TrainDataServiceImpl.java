@@ -1,10 +1,9 @@
 package impl;
 
-import models.Seat;
-import models.WebTicketManager;
+import domain.models.Seat;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
-import service.TrainDataService;
+import domain.service.TrainDataService;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
@@ -12,13 +11,16 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class TrainDataServiceImpl implements TrainDataService {
+    public static String uriBookingReferenceService = "http://localhost:8282";
+    public static String uriTrainDataService = "http://localhost:8181";
+
     public TrainDataServiceImpl() {
     }
 
     @Override
     public String getTrain(String train) {
         Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-        WebTarget webTarget = client.target(WebTicketManager.uriTrainDataService).path("data_for_train/" + train);
+        WebTarget webTarget = client.target(uriTrainDataService).path("data_for_train/" + train);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
         assert response.getStatus() == Response.Status.OK.getStatusCode();
@@ -29,7 +31,7 @@ public class TrainDataServiceImpl implements TrainDataService {
     @Override
     public void doReservation(String train, List<Seat> availableSeats, String bookingRef) {
         Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-        WebTarget uri = client.target(WebTicketManager.uriTrainDataService).path("reserve");
+        WebTarget uri = client.target(uriTrainDataService).path("reserve");
         Invocation.Builder request = uri.request(MediaType.APPLICATION_JSON);
 
         // HTTP POST

@@ -1,6 +1,6 @@
-package service;
+package domain.service;
 
-import models.Seat;
+import domain.models.Seat;
 
 import java.util.List;
 

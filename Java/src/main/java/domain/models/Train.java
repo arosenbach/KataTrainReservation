@@ -1,4 +1,6 @@
-package models;
+package domain.models;
+
+import domain.models.Seat;
 
 import javax.json.Json;
 import javax.json.JsonObject;

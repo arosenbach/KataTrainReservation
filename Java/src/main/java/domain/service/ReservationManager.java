@@ -1,6 +1,6 @@
-package service;
+package domain.service;
 
-import models.Reservation;
+import domain.models.Reservation;
 
 public interface ReservationManager {
     Reservation reserve(String trainId, int seats);

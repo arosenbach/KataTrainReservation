@@ -1,6 +1,6 @@
 package coltrain;
 
-import service.BookingReferenceService;
+import domain.service.BookingReferenceService;
 
 class FakeBookingReferenceService implements BookingReferenceService {
     @Override

@@ -1,11 +1,11 @@
 package controller;
 
+import domain.models.Reservation;
 import impl.BookingReferenceServiceImpl;
 import impl.TrainDataServiceImpl;
-import models.WebTicketManager;
-import models.Reservation;
-import models.ReservationRequestDTO;
-import models.Seat;
+import domain.service.WebTicketManager;
+import domain.models.ReservationRequestDTO;
+import domain.models.Seat;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

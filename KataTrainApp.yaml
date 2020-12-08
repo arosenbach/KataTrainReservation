@@ -12,11 +12,11 @@ servers:
   variables: {}
 tags:
   - name: "Booking"
-    description: "Booking service"
+    description: "Booking domain.service"
   - name: "Reservations"
     description: "Reservation API"  
   - name: "Data"
-    description: "Data service"
+    description: "Data domain.service"
 paths:
   /booking_reference:
     get:

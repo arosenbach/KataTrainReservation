@@ -1,4 +1,4 @@
-package models;
+package domain.models;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +49,7 @@ public class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation{" +
+        return "domain.models.Reservation{" +
                 "trainId='" + trainId + '\'' +
                 ", availableSeats=" + availableSeats +
                 ", bookingRef='" + bookingRef + '\'' +
