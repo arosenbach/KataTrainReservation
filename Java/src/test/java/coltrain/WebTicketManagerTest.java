@@ -1,8 +1,8 @@
 package coltrain;
 
 import coltrain.api.controllers.ReservationsController;
-import coltrain.api.models.Reservation;
-import coltrain.api.models.Seat;
+import models.Reservation;
+import models.Seat;
 import org.junit.Ignore;
 import org.junit.Test;
 

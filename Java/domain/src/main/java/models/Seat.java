@@ -1,4 +1,4 @@
-package coltrain.api.models;
+package models;
 
 public class Seat {
     private final String coach;

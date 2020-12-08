@@ -1,4 +1,4 @@
-package coltrain.api.models;
+package models;
 
 import java.util.Collections;
 import java.util.List;

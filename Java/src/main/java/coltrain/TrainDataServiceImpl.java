@@ -1,6 +1,6 @@
 package coltrain;
 
-import coltrain.api.models.Seat;
+import models.Seat;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 

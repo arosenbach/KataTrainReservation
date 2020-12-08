@@ -1,5 +1,7 @@
 package coltrain;
 
+import models.Train;
+
 import java.util.HashMap;
 import java.util.Map;
 

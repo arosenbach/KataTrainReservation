@@ -1,7 +1,7 @@
 package coltrain;
 
 import coltrain.api.controllers.ReservationsController;
-import coltrain.api.models.Reservation;
+import models.Reservation;
 import org.junit.Ignore;
 import org.junit.Test;
 

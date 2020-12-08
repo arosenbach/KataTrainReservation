@@ -1,6 +1,6 @@
-package coltrain;
+package models;
 
-import coltrain.api.models.Seat;
+import models.Seat;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -53,7 +53,7 @@ public class Train {
         return this.maxSeat;
     }
 
-    List<Seat> getSeats(int seats) {
+    public List<Seat> getSeats(int seats) {
         // find seats to reserve
         List<Seat> availableSeats = new ArrayList<>();
         for (int index = 0, i = 0; index < getSeats().size(); index++) {
@@ -68,7 +68,7 @@ public class Train {
         return availableSeats;
     }
 
-    boolean canBook(int seats) {
+    public boolean canBook(int seats) {
         return (getReservedSeats() + seats) <= Math.floor(ThreasholdManager.getMaxRes() * getMaxSeat());
     }
 }

@@ -1,12 +1,14 @@
 package coltrain;
 
-import coltrain.api.models.Reservation;
-import coltrain.api.models.Seat;
+import models.Reservation;
+import models.Seat;
+import models.Train;
+import service.ReservationManager;
 
 import java.util.Collections;
 import java.util.List;
 
-public class WebTicketManager {
+public class WebTicketManager implements ReservationManager {
 
     static String uriBookingReferenceService = "http://localhost:8282";
     static String uriTrainDataService = "http://localhost:8181";
@@ -25,6 +27,7 @@ public class WebTicketManager {
         this(new TrainDataServiceImpl(), new BookingReferenceServiceImpl());
     }
 
+    @Override
     public Reservation reserve(String trainId, int seats) {
         Train trainInst = getTrain(trainId);
 
