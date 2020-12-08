@@ -1,7 +1,9 @@
-package coltrain;
+package impl;
 
+import models.WebTicketManager;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
+import service.BookingReferenceService;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

@@ -1,4 +1,4 @@
-package coltrain;
+package service;
 
 import models.Seat;
 

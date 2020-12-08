@@ -1,12 +1,13 @@
 package models;
 
-import models.Seat;
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Train {
     private final List<Seat> seats;

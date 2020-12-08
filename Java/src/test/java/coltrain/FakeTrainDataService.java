@@ -1,6 +1,7 @@
 package coltrain;
 
 import models.Seat;
+import service.TrainDataService;
 
 import java.util.List;
 

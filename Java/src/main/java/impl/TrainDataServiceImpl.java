@@ -1,8 +1,10 @@
-package coltrain;
+package impl;
 
 import models.Seat;
+import models.WebTicketManager;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
+import service.TrainDataService;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;

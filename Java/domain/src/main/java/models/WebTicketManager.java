@@ -1,17 +1,16 @@
-package coltrain;
+package models;
 
-import models.Reservation;
-import models.Seat;
-import models.Train;
+import service.BookingReferenceService;
 import service.ReservationManager;
+import service.TrainDataService;
 
 import java.util.Collections;
 import java.util.List;
 
 public class WebTicketManager implements ReservationManager {
 
-    static String uriBookingReferenceService = "http://localhost:8282";
-    static String uriTrainDataService = "http://localhost:8181";
+    public static String uriBookingReferenceService = "http://localhost:8282";
+    public static String uriTrainDataService = "http://localhost:8181";
     private final TrainDataService trainDataService;
     private TrainCaching trainCaching;
     private BookingReferenceService bookingReferenceService;
@@ -21,10 +20,6 @@ public class WebTicketManager implements ReservationManager {
         this.trainCaching = new TrainCaching();
         this.trainCaching.clear();
         this.trainDataService = trainDataService;
-    }
-
-    public WebTicketManager() {
-        this(new TrainDataServiceImpl(), new BookingReferenceServiceImpl());
     }
 
     @Override
