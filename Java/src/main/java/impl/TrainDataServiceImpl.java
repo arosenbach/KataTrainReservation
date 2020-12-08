@@ -1,6 +1,7 @@
 package impl;
 
 import domain.models.Seat;
+import domain.models.Train;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 import domain.service.TrainDataService;
@@ -18,14 +19,16 @@ public class TrainDataServiceImpl implements TrainDataService {
     }
 
     @Override
-    public String getTrain(String train) {
+    public Train getTrain(String train) {
         Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
         WebTarget webTarget = client.target(uriTrainDataService).path("data_for_train/" + train);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
         assert response.getStatus() == Response.Status.OK.getStatusCode();
 
-        return response.readEntity(String.class);
+        String trainJson = response.readEntity(String.class);
+
+        return new Train(trainJson);
     }
 
     @Override

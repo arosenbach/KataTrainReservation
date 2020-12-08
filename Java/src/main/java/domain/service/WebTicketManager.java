@@ -54,8 +54,7 @@ public class WebTicketManager implements ReservationManager {
 
     private Train getTrain(String trainId) {
         // get the train
-        String jsonTrain = trainDataService.getTrain(trainId);
-        return new Train(jsonTrain);
+        return trainDataService.getTrain(trainId);
     }
 
 }

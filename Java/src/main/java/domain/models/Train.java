@@ -16,8 +16,14 @@ public class Train {
     private int reservedSeats;
     private int maxSeat = 0;
 
+
+
     public Train(final String trainTopol) {
-        this.seats = new ArrayList<>();
+        seats = fromJson(trainTopol);
+    }
+
+    private List<Seat> fromJson(String trainTopol) {
+        final List<Seat> seats = new ArrayList<>();
         Seat e;
         //  sample
         //  {"seats": {"1A": {"booking_reference": "", "seat_number": "1", "coach": "A"},
@@ -32,7 +38,7 @@ public class Train {
         for (Map.Entry<String, JsonValue> stuff : allStuffs) {
             final JsonObject seat = stuff.getValue().asJsonObject();
              e= new Seat(seat.getString("coach"), Integer.parseInt(seat.getString("seat_number")));
-            this.seats.add(e);
+            seats.add(e);
             if(!seat.getString("booking_reference").isEmpty()){
                 this.reservedSeats++;
             }
@@ -42,6 +48,7 @@ public class Train {
                 e.setBookingRef(seat.getString("booking_reference"));
             }
         }
+        return seats;
     }
 
     public List<Seat> getSeats() {
