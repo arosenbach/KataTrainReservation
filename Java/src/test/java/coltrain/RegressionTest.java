@@ -28,7 +28,7 @@ public class RegressionTest {
     public void reserve_givenMoreThanThresholdSeatsRequested_itShouldReturnNoSeats() {
         final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(TrainTopology.TRAIN_SIX_SEATS_NOT_RESERVED), new FakeBookingReferenceService());
         final Reservation reservation = sut.reserve("express2000", 5);
-        assertEquals("{\"trainId\": \"express2000\",\"bookingReference\": \"\",\"seats\":[]}",ReservationsController.toJsonString(reservation));
+        assertEquals("{\"trainId\": \"express2000\",\"bookingReference\": \"\",\"seats\":[]}", ReservationsController.toJsonString(reservation));
     }
 
     @Ignore("business rule is not respected")

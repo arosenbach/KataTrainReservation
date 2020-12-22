@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class WebTicketManagerTest {
 
@@ -25,7 +25,7 @@ public class WebTicketManagerTest {
     public void reserve_givenOneSeatRequested_itShouldReturnOneSeat() {
         final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(TrainTopology.TRAIN_TWO_SEATS_NOT_RESERVED), new FakeBookingReferenceService());
         final Reservation reservation = sut.reserve("express2000", 1);
-        assertEquals("{\"trainId\": \"express2000\",\"bookingReference\": \"bookingReference\",\"seats\":[\"1A\"]}",ReservationsController.toJsonString(reservation));
+        assertEquals("{\"trainId\": \"express2000\",\"bookingReference\": \"bookingReference\",\"seats\":[\"1A\"]}", ReservationsController.toJsonString(reservation));
     }
 
     @Test
