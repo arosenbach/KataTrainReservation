@@ -1,12 +1,11 @@
 package controller;
 
 import domain.models.Reservation;
-import impl.BookingReferenceServiceImpl;
-import impl.TrainDataServiceImpl;
-import domain.service.WebTicketManager;
 import domain.models.ReservationRequestDTO;
 import domain.models.Seat;
+import domain.service.ReservationManager;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,12 +17,11 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ReservationsController {
-    public ReservationsController() { }
-
+    @Inject
+    private ReservationManager manager;
 
     @POST
     public String post(ReservationRequestDTO reservationRequest) {
-        final WebTicketManager manager = new WebTicketManager(new TrainDataServiceImpl(), new BookingReferenceServiceImpl());
         return toJsonString(manager.reserve(reservationRequest.getTrainId(), reservationRequest.getNumberOfSeats()));
     }
 
