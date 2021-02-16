@@ -31,6 +31,10 @@ public class Seat {
         return this.coach;
     }
 
+    public boolean isAvailable() {
+        return "".equals(bookingRef);
+    }
+
     @Override
     public String toString() {
         return "Seat{" +

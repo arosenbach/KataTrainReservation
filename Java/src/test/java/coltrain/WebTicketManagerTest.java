@@ -44,8 +44,8 @@ public class WebTicketManagerTest {
         final Reservation reservation = sut.reserve("express2000", 3);
 
         List<Seat> seats = Arrays.asList(new Seat("B", 4), new Seat("B", 5), new Seat("B", 6));
-        seats.forEach(s->s.setBookingRef("bookingReference")); // inner to seat logic.
-        Reservation expected =  new Reservation("express2000", seats, "");
+        seats.forEach(s -> s.setBookingRef("bookingReference")); // inner to seat logic.
+        Reservation expected = new Reservation("express2000", seats, "");
         assertEquals(expected, reservation);
     }
 
