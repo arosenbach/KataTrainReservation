@@ -7,7 +7,7 @@ import domain.service.TrainDataService;
 import java.util.List;
 
 class FakeTrainDataService implements TrainDataService {
-    private String trainTopology;
+    private final String trainTopology;
 
     public FakeTrainDataService(String trainTopology) {
         this.trainTopology = trainTopology;

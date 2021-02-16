@@ -30,4 +30,13 @@ public class Seat {
     public String getCoachName() {
         return this.coach;
     }
+
+    @Override
+    public String toString() {
+        return "Seat{" +
+                "coach='" + coach + '\'' +
+                ", seatNumber=" + seatNumber +
+                ", bookingRef='" + bookingRef + '\'' +
+                '}';
+    }
 }

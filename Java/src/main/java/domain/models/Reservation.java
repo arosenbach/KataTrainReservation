@@ -3,6 +3,7 @@ package domain.models;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Reservation {
 
@@ -49,9 +50,10 @@ public class Reservation {
 
     @Override
     public String toString() {
+        String collect = availableSeats.stream().map(Object::toString).collect(Collectors.joining(","));
         return "domain.models.Reservation{" +
                 "trainId='" + trainId + '\'' +
-                ", availableSeats=" + availableSeats +
+                ", availableSeats=" + collect +
                 ", bookingRef='" + bookingRef + '\'' +
                 '}';
     }
