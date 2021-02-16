@@ -12,16 +12,12 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class TrainDataServiceImpl implements TrainDataService {
-    public static String uriBookingReferenceService = "http://localhost:8282";
-    public static String uriTrainDataService = "http://localhost:8181";
-
-    public TrainDataServiceImpl() {
-    }
+    private static final String TRAIN_DATA_SERVICE_URL = "http://localhost:8181";
 
     @Override
     public Train getTrain(String train) {
         Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-        WebTarget webTarget = client.target(uriTrainDataService).path("data_for_train/" + train);
+        WebTarget webTarget = client.target(TRAIN_DATA_SERVICE_URL).path("data_for_train/" + train);
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         Response response = invocationBuilder.get();
         assert response.getStatus() == Response.Status.OK.getStatusCode();
@@ -34,7 +30,7 @@ public class TrainDataServiceImpl implements TrainDataService {
     @Override
     public void doReservation(String train, List<Seat> availableSeats, String bookingRef) {
         Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-        WebTarget uri = client.target(uriTrainDataService).path("reserve");
+        WebTarget uri = client.target(TRAIN_DATA_SERVICE_URL).path("reserve");
         Invocation.Builder request = uri.request(MediaType.APPLICATION_JSON);
 
         // HTTP POST
