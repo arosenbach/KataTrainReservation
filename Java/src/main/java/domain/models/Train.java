@@ -9,14 +9,15 @@ import java.util.*;
 public class Train {
     private final List<Coach> coaches;
     private int reservedSeats;
-    private int maxSeat = 0;
+    private int maxSeat;
 
-
-    public Train(final String trainTopol) {
-        coaches = fromJson(trainTopol);
+    public Train(int maxSeats, int reservedSeats, Collection<Coach> coaches) {
+        this.maxSeat = maxSeats;
+        this.reservedSeats = reservedSeats;
+        this.coaches = new ArrayList<>(coaches);
     }
 
-    private List<Coach> fromJson(String trainTopol) {
+    public static Train fromJson(String trainTopol) {
         //  sample
         //  {"seats": {"1A": {"booking_reference": "", "seat_number": "1", "coach": "A"},
         //  "2A": {"booking_reference": "", "seat_number": "2", "coach": "A"}}}
@@ -27,7 +28,8 @@ public class Train {
 
 
         Map<String, Coach> seatsByCoachMap = new LinkedHashMap<>();
-        this.reservedSeats = 0;
+        int reservedSeats = 0;
+        int maxSeats = 0;
         for (Map.Entry<String, JsonValue> jsonSeatEntry : jsonSeats) {
 
             final JsonObject jsonSeat = jsonSeatEntry.getValue().asJsonObject();
@@ -40,16 +42,17 @@ public class Train {
             Coach coach = seatsByCoachMap.get(coachId);
             coach.addSeat(seat);
 
-            if (!jsonSeat.getString("booking_reference").isEmpty()) {
-                this.reservedSeats++;
+            boolean isAvailable = jsonSeat.getString("booking_reference").isEmpty();
+            if (!isAvailable) {
+                reservedSeats++;
             }
-            this.maxSeat++;
+            maxSeats++;
 
-            if (!jsonSeat.getString("booking_reference").isEmpty()) {
+            if (!isAvailable) {
                 seat.setBookingRef(jsonSeat.getString("booking_reference"));
             }
         }
-        return new ArrayList<>(seatsByCoachMap.values());
+        return new Train(maxSeats, reservedSeats, seatsByCoachMap.values());
     }
 
     public int getReservedSeats() {

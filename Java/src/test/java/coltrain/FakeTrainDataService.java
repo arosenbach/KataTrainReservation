@@ -15,7 +15,7 @@ class FakeTrainDataService implements TrainDataService {
 
     @Override
     public Train getTrain(String train) {
-        return new Train(trainTopology);
+        return Train.fromJson(trainTopology);
     }
 
     @Override

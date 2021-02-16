@@ -24,7 +24,7 @@ public class TrainDataServiceImpl implements TrainDataService {
 
         String trainJson = response.readEntity(String.class);
 
-        return new Train(trainJson);
+        return Train.fromJson(trainJson);
     }
 
     @Override
@@ -56,11 +56,10 @@ public class TrainDataServiceImpl implements TrainDataService {
         seats.append("]");
 
 
-        String result = String.format("{\"trainId\": \"%s\", \"bookingReference\": \"%s\", \"seats\":%s}",
+        return String.format("{\"trainId\": \"%s\", \"bookingReference\": \"%s\", \"seats\":%s}",
                 trainId,
                 bookingRef,
                 seats.toString());
-        return result;
 
     }
 }
