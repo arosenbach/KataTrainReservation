@@ -74,9 +74,9 @@ public class Train {
         int assignedSeats = 0;
         for (Coach coach : coaches) {
             List<Seat> coachAvailableSeats = coach.getAvailableSeats();
-//            if (availableSeats.size() >= seats) {
-//                return availableSeats;
-//            }
+            if (coachAvailableSeats.size() >= seats) {
+                return coachAvailableSeats.subList(0, seats);
+            }
             for (Seat s : coachAvailableSeats) {
                 if (assignedSeats < seats) {
                     availableSeats.add(s);

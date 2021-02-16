@@ -3,7 +3,6 @@ package coltrain;
 import domain.models.Reservation;
 import domain.models.Seat;
 import domain.service.WebTicketManager;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -37,7 +36,6 @@ public class WebTicketManagerTest {
         assertEquals(expected, reservation);
     }
 
-    @Ignore("business rule is not respected")
     @Test
     public void reserve_givenTwoSeatsRequested_itShouldReturnSeatsInTheSameCoach() {
         final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(TrainTopology.TRAIN_TWO_COACHES_SIX_SEATS_AND_ONE_SEAT_RESERVED), new FakeBookingReferenceService());
@@ -45,7 +43,7 @@ public class WebTicketManagerTest {
 
         List<Seat> seats = Arrays.asList(new Seat("B", 4), new Seat("B", 5), new Seat("B", 6));
         seats.forEach(s -> s.setBookingRef("bookingReference")); // inner to seat logic.
-        Reservation expected = new Reservation("express2000", seats, "");
+        Reservation expected = new Reservation("express2000", seats, "bookingReference");
         assertEquals(expected, reservation);
     }
 
