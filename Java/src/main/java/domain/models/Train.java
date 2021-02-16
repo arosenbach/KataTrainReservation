@@ -5,7 +5,6 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.io.StringReader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Train {
     private final List<Coach> coaches;
@@ -18,46 +17,39 @@ public class Train {
     }
 
     private List<Coach> fromJson(String trainTopol) {
-        Seat e;
         //  sample
         //  {"seats": {"1A": {"booking_reference": "", "seat_number": "1", "coach": "A"},
         //  "2A": {"booking_reference": "", "seat_number": "2", "coach": "A"}}}
 
-        JsonObject parsed = Json.createReader(new StringReader(trainTopol)).readObject();
+        JsonObject jsonObject = Json.createReader(new StringReader(trainTopol)).readObject();
 
-        final Set<Map.Entry<String, JsonValue>> allStuffs = parsed.getJsonObject("seats").entrySet();
+        final Set<Map.Entry<String, JsonValue>> jsonSeats = jsonObject.getJsonObject("seats").entrySet();
 
 
         Map<String, Coach> seatsByCoachMap = new LinkedHashMap<>();
         this.reservedSeats = 0;
-        for (Map.Entry<String, JsonValue> stuff : allStuffs) {
+        for (Map.Entry<String, JsonValue> jsonSeatEntry : jsonSeats) {
 
-            final JsonObject seat = stuff.getValue().asJsonObject();
-            String coachString = seat.getString("coach");
-            Coach coach = seatsByCoachMap.get(coachString);
-            if (coach == null) {
-                coach = new Coach();
-                seatsByCoachMap.put(coachString, coach);
+            final JsonObject jsonSeat = jsonSeatEntry.getValue().asJsonObject();
+            String coachId = jsonSeat.getString("coach");
+            if (!seatsByCoachMap.containsKey(coachId)) {
+                seatsByCoachMap.put(coachId, new Coach());
             }
 
-            e = new Seat(coachString, Integer.parseInt(seat.getString("seat_number")));
-            coach.addSeat(e);
-            if (!seat.getString("booking_reference").isEmpty()) {
+            Seat seat = new Seat(coachId, Integer.parseInt(jsonSeat.getString("seat_number")));
+            Coach coach = seatsByCoachMap.get(coachId);
+            coach.addSeat(seat);
+
+            if (!jsonSeat.getString("booking_reference").isEmpty()) {
                 this.reservedSeats++;
             }
             this.maxSeat++;
 
-            if (!seat.getString("booking_reference").isEmpty()) {
-                e.setBookingRef(seat.getString("booking_reference"));
+            if (!jsonSeat.getString("booking_reference").isEmpty()) {
+                seat.setBookingRef(jsonSeat.getString("booking_reference"));
             }
         }
         return new ArrayList<>(seatsByCoachMap.values());
-    }
-
-    public List<Seat> getSeats() {
-        return this.coaches.stream()
-                .flatMap(c -> c.getSeats().stream())
-                .collect(Collectors.toList());
     }
 
     public int getReservedSeats() {
