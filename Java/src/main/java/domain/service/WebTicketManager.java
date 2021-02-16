@@ -1,16 +1,18 @@
 package domain.service;
 
-import domain.models.*;
+import domain.models.Reservation;
+import domain.models.Seat;
+import domain.models.Train;
+import domain.models.TrainCaching;
 
-import java.util.Collections;
 import java.util.List;
 
 public class WebTicketManager implements ReservationManager {
 
 
     private final TrainDataService trainDataService;
-    private TrainCaching trainCaching;
-    private BookingReferenceService bookingReferenceService;
+    private final TrainCaching trainCaching;
+    private final BookingReferenceService bookingReferenceService;
 
     public WebTicketManager(TrainDataService trainDataService, BookingReferenceService bookingReferenceService) {
         this.bookingReferenceService = bookingReferenceService;
@@ -28,7 +30,7 @@ public class WebTicketManager implements ReservationManager {
             final List<Seat> availableSeats = trainInst.getSeats(seats);
 
             if (availableSeats.size() != seats) {
-                return new Reservation(trainId, Collections.<Seat>emptyList(), "");
+                return Reservation.emptyReservation(trainId);
             } else {
 
                 String bookingRef = bookingReferenceService.getBookRef();
@@ -49,7 +51,7 @@ public class WebTicketManager implements ReservationManager {
             }
         }
 
-        return new Reservation(trainId, Collections.<Seat>emptyList(), "");
+        return Reservation.emptyReservation(trainId);
     }
 
     private Train getTrain(String trainId) {
