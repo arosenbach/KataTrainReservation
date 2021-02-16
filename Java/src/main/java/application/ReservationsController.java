@@ -1,7 +1,6 @@
-package controller;
+package application;
 
 import domain.models.Reservation;
-import domain.models.ReservationRequestDTO;
 import domain.models.Seat;
 import domain.service.ReservationManager;
 

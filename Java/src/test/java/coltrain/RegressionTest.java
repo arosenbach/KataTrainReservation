@@ -1,6 +1,6 @@
 package coltrain;
 
-import controller.ReservationsController;
+import application.ReservationsController;
 import domain.models.Reservation;
 import domain.service.WebTicketManager;
 import org.junit.Test;

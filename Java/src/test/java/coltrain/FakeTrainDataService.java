@@ -3,7 +3,7 @@ package coltrain;
 import domain.models.Seat;
 import domain.models.Train;
 import domain.service.TrainDataService;
-import impl.TrainDataServiceImpl;
+import infra.TrainDataServiceImpl;
 
 import java.util.List;
 

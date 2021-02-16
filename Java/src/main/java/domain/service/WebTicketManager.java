@@ -3,21 +3,16 @@ package domain.service;
 import domain.models.Reservation;
 import domain.models.Seat;
 import domain.models.Train;
-import domain.models.TrainCaching;
 
 import java.util.List;
 
 public class WebTicketManager implements ReservationManager {
 
-
     private final TrainDataService trainDataService;
-    private final TrainCaching trainCaching;
     private final BookingReferenceService bookingReferenceService;
 
     public WebTicketManager(TrainDataService trainDataService, BookingReferenceService bookingReferenceService) {
         this.bookingReferenceService = bookingReferenceService;
-        this.trainCaching = new TrainCaching();
-        this.trainCaching.clear();
         this.trainDataService = trainDataService;
     }
 
@@ -42,7 +37,6 @@ public class WebTicketManager implements ReservationManager {
                 }
 
                 if (numberOfReserv == seats) {
-                    trainCaching.save(trainId, trainInst, bookingRef);
 
                     trainDataService.doReservation(trainId, availableSeats, bookingRef);
 

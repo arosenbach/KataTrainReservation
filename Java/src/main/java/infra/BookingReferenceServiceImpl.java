@@ -1,8 +1,8 @@
-package impl;
+package infra;
 
+import domain.service.BookingReferenceService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
-import domain.service.BookingReferenceService;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

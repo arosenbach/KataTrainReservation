@@ -1,8 +1,8 @@
-import controller.ReservationsController;
+import application.ReservationsController;
 import domain.service.ReservationManager;
 import domain.service.WebTicketManager;
-import impl.BookingReferenceServiceImpl;
-import impl.TrainDataServiceImpl;
+import infra.BookingReferenceServiceImpl;
+import infra.TrainDataServiceImpl;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;

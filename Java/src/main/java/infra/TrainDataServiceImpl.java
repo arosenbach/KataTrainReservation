@@ -1,11 +1,11 @@
-package impl;
+package infra;
 
 import domain.models.Coach;
 import domain.models.Seat;
 import domain.models.Train;
+import domain.service.TrainDataService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
-import domain.service.TrainDataService;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -33,7 +33,6 @@ public class TrainDataServiceImpl implements TrainDataService {
 
 
         Map<String, Coach> seatsByCoachMap = new LinkedHashMap<>();
-        int reservedSeats = 0;
         for (Map.Entry<String, JsonValue> jsonSeatEntry : jsonSeats) {
 
             final JsonObject jsonSeat = jsonSeatEntry.getValue().asJsonObject();
@@ -42,18 +41,12 @@ public class TrainDataServiceImpl implements TrainDataService {
                 seatsByCoachMap.put(coachId, new Coach());
             }
 
+            String bookingReference = jsonSeat.getString("booking_reference");
             Seat seat = new Seat(coachId, Integer.parseInt(jsonSeat.getString("seat_number")));
+            seat.setBookingRef(bookingReference);
+
             Coach coach = seatsByCoachMap.get(coachId);
             coach.addSeat(seat);
-
-            boolean isAvailable = jsonSeat.getString("booking_reference").isEmpty();
-            if (!isAvailable) {
-                reservedSeats++;
-            }
-
-            if (!isAvailable) {
-                seat.setBookingRef(jsonSeat.getString("booking_reference"));
-            }
         }
         return new Train(seatsByCoachMap.values());
     }

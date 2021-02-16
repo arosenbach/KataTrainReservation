@@ -1,4 +1,4 @@
-package domain.models;
+package application;
 
 public class ReservationRequestDTO {
     private String trainId;
