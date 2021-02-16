@@ -2,6 +2,7 @@ package domain.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Coach {
     private final List<Seat> seats;
@@ -20,5 +21,9 @@ public class Coach {
 
     public List<Seat> getSeats() {
         return this.seats;
+    }
+
+    public List<Seat> getAvailableSeats() {
+        return this.seats.stream().filter(Seat::isAvailable).collect(Collectors.toList());
     }
 }

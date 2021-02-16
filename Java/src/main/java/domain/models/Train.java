@@ -71,12 +71,16 @@ public class Train {
     public List<Seat> getSeats(int seats) {
         // find seats to reserve
         List<Seat> availableSeats = new ArrayList<>();
-        for (int coach = 0, numAvailableSeats = 0; coach < getSeats().size(); coach++) {
-            Seat each = (Seat) getSeats().toArray()[coach];
-            if (each.isAvailable()) {
-                numAvailableSeats++;
-                if (numAvailableSeats <= seats) {
-                    availableSeats.add(each);
+        int assignedSeats = 0;
+        for (Coach coach : coaches) {
+            List<Seat> coachAvailableSeats = coach.getAvailableSeats();
+//            if (availableSeats.size() >= seats) {
+//                return availableSeats;
+//            }
+            for (Seat s : coachAvailableSeats) {
+                if (assignedSeats < seats) {
+                    availableSeats.add(s);
+                    assignedSeats++;
                 }
             }
         }
