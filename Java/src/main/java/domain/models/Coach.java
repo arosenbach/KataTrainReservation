@@ -26,4 +26,8 @@ public class Coach {
     public List<Seat> getAvailableSeats() {
         return this.seats.stream().filter(Seat::isAvailable).collect(Collectors.toList());
     }
+
+    public List<Seat> getBookedSeats() {
+        return this.seats.stream().filter(Seat::isBooked).collect(Collectors.toList());
+    }
 }

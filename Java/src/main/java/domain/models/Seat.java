@@ -35,6 +35,10 @@ public class Seat {
         return "".equals(bookingRef);
     }
 
+    public boolean isBooked() {
+        return !isAvailable();
+    }
+
     @Override
     public String toString() {
         return "Seat{" +

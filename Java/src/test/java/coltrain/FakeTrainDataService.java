@@ -3,6 +3,7 @@ package coltrain;
 import domain.models.Seat;
 import domain.models.Train;
 import domain.service.TrainDataService;
+import impl.TrainDataServiceImpl;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ class FakeTrainDataService implements TrainDataService {
 
     @Override
     public Train getTrain(String train) {
-        return Train.fromJson(trainTopology);
+        return TrainDataServiceImpl.fromJson(trainTopology);
     }
 
     @Override

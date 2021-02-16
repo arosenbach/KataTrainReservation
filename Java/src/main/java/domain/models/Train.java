@@ -1,64 +1,20 @@
 package domain.models;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import java.io.StringReader;
 import java.util.*;
 
 public class Train {
     private final List<Coach> coaches;
-    private int reservedSeats;
-    private int maxSeat;
 
-    public Train(int maxSeats, int reservedSeats, Collection<Coach> coaches) {
-        this.maxSeat = maxSeats;
-        this.reservedSeats = reservedSeats;
+    public Train(Collection<Coach> coaches) {
         this.coaches = new ArrayList<>(coaches);
     }
 
-    public static Train fromJson(String trainTopol) {
-        //  sample
-        //  {"seats": {"1A": {"booking_reference": "", "seat_number": "1", "coach": "A"},
-        //  "2A": {"booking_reference": "", "seat_number": "2", "coach": "A"}}}
-
-        JsonObject jsonObject = Json.createReader(new StringReader(trainTopol)).readObject();
-
-        final Set<Map.Entry<String, JsonValue>> jsonSeats = jsonObject.getJsonObject("seats").entrySet();
-
-
-        Map<String, Coach> seatsByCoachMap = new LinkedHashMap<>();
-        int reservedSeats = 0;
-        for (Map.Entry<String, JsonValue> jsonSeatEntry : jsonSeats) {
-
-            final JsonObject jsonSeat = jsonSeatEntry.getValue().asJsonObject();
-            String coachId = jsonSeat.getString("coach");
-            if (!seatsByCoachMap.containsKey(coachId)) {
-                seatsByCoachMap.put(coachId, new Coach());
-            }
-
-            Seat seat = new Seat(coachId, Integer.parseInt(jsonSeat.getString("seat_number")));
-            Coach coach = seatsByCoachMap.get(coachId);
-            coach.addSeat(seat);
-
-            boolean isAvailable = jsonSeat.getString("booking_reference").isEmpty();
-            if (!isAvailable) {
-                reservedSeats++;
-            }
-
-            if (!isAvailable) {
-                seat.setBookingRef(jsonSeat.getString("booking_reference"));
-            }
-        }
-        return new Train(jsonSeats.size(), reservedSeats, seatsByCoachMap.values());
-    }
-
     public int getReservedSeats() {
-        return this.reservedSeats;
+        return this.coaches.stream().mapToInt(it -> (it.getBookedSeats().size())).sum();
     }
 
     public int getMaxSeat() {
-        return this.maxSeat;
+        return this.coaches.stream().mapToInt(it -> it.getSeats().size()).sum();
     }
 
     public List<Seat> getSeats(int seats) {
