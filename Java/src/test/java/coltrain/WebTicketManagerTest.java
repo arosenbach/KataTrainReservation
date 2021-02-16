@@ -37,6 +37,22 @@ public class WebTicketManagerTest {
     }
 
     @Test
+    public void reserve_givenNotEnoughSeatsInTheSameCoach_itShouldNoSeats() {
+        final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(TrainTopology.TRAIN_SIX_SEATS_NOT_RESERVED_TWO_COACHES), new FakeBookingReferenceService());
+        final Reservation reservation = sut.reserve("express2000", 4);
+        final Reservation expected = new Reservation("express2000", Collections.emptyList(), "");
+        assertEquals(expected, reservation);
+    }
+
+    @Test
+    public void reserve_givenAllSeatsAreReserved_itShouldNoSeats() {
+        final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(TrainTopology.TRAIN_TWO_COACHES_SIX_SEATS_AND_ALL_SEAT_RESERVED), new FakeBookingReferenceService());
+        final Reservation reservation = sut.reserve("express2000", 5);
+        final Reservation expected = new Reservation("express2000", Collections.emptyList(), "");
+        assertEquals(expected, reservation);
+    }
+
+    @Test
     public void reserve_givenTwoSeatsRequested_itShouldReturnSeatsInTheSameCoach() {
         final WebTicketManager sut = new WebTicketManager(new FakeTrainDataService(TrainTopology.TRAIN_TWO_COACHES_SIX_SEATS_AND_ONE_SEAT_RESERVED), new FakeBookingReferenceService());
         final Reservation reservation = sut.reserve("express2000", 3);

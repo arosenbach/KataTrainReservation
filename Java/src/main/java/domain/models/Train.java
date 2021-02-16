@@ -29,7 +29,6 @@ public class Train {
 
         Map<String, Coach> seatsByCoachMap = new LinkedHashMap<>();
         int reservedSeats = 0;
-        int maxSeats = 0;
         for (Map.Entry<String, JsonValue> jsonSeatEntry : jsonSeats) {
 
             final JsonObject jsonSeat = jsonSeatEntry.getValue().asJsonObject();
@@ -46,13 +45,12 @@ public class Train {
             if (!isAvailable) {
                 reservedSeats++;
             }
-            maxSeats++;
 
             if (!isAvailable) {
                 seat.setBookingRef(jsonSeat.getString("booking_reference"));
             }
         }
-        return new Train(maxSeats, reservedSeats, seatsByCoachMap.values());
+        return new Train(jsonSeats.size(), reservedSeats, seatsByCoachMap.values());
     }
 
     public int getReservedSeats() {
@@ -65,21 +63,13 @@ public class Train {
 
     public List<Seat> getSeats(int seats) {
         // find seats to reserve
-        List<Seat> availableSeats = new ArrayList<>();
-        int assignedSeats = 0;
         for (Coach coach : coaches) {
             List<Seat> coachAvailableSeats = coach.getAvailableSeats();
             if (coachAvailableSeats.size() >= seats) {
                 return coachAvailableSeats.subList(0, seats);
             }
-            for (Seat s : coachAvailableSeats) {
-                if (assignedSeats < seats) {
-                    availableSeats.add(s);
-                    assignedSeats++;
-                }
-            }
         }
-        return availableSeats;
+        return Collections.emptyList();
     }
 
     public boolean canBook(int seats) {
